@@ -117,20 +117,19 @@ class Location:
         self.lng = longitude
 
     def __repr__(self):
-        return f"{self.lat}-{self.lng}"
+        return f"{self.lat}:{self.lng}"
 
     def __str__(self):
-        return f"{self.lat}-{self.lng}"
+        return f"{self.lat}:{self.lng}"
 
     def __hash__(self):
-        return hash(f"{self.lat}-{self.lng}")
+        return hash(f"{self.lat}:{self.lng}")
 
     def __eq__(self, other):
         try:
             return self.lat == other.lat and self.lng == other.lng
         except AttributeError:
             return NotImplemented
-
 
 if __name__ == "__main__":
     print("main")
