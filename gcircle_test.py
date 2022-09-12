@@ -1,5 +1,5 @@
-
-# Title: gc_test.py
+#
+# Title: gcircle_test.py
 # Description: test for GreatCircle
 # Development Environment:OS X 12.5.1/Python 3.9.13
 # Repository: https://github.com/guycole/mellow-bullseye

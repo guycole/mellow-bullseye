@@ -9,8 +9,9 @@ import typing
 
 earth_radius_statute_miles = 3963.3
 earth_radius_kilometers = 6378.3
-epsilon = 1e-6
-finagle = 1e6
+EPSILON = 1e-6
+FINAGLE = 1e6
+PI_HALF = math.pi/2.0
 
 
 class DmsAngle:
@@ -26,8 +27,8 @@ class DmsAngle:
         decimal_second = second / 3600.0
 
         # restrict the precision
-        temp = round((decimal_minute + decimal_second) * finagle)
-        self.dms_converted = decimal_degree + temp / finagle
+        temp = round((decimal_minute + decimal_second) * FINAGLE)
+        self.dms_converted = decimal_degree + temp / FINAGLE
 
         # self.dms_converted = decimal_degree + decimal_minute + decimal_second
         if degree < 0.0:
@@ -49,7 +50,7 @@ class DmsAngle:
 
             if flag1 == flag2:
                 delta = self.dms_converted - other.dms_converted
-                return abs(delta) < epsilon
+                return abs(delta) < EPSILON
             else:
                 return False
         except AttributeError:
@@ -59,8 +60,8 @@ class DmsAngle:
 class DdAngle:
     """decimal degress container"""
 
-    def __init__(self, value: float, rad_flag: bool):
-        if rad_flag:
+    def __init__(self, value: float, radian_flag: bool):
+        if radian_flag:
             self.dd_value = math.degrees(value)
             self.radian_value = value
         else:
@@ -83,7 +84,7 @@ class DdAngle:
 
             if flag1 == flag2:
                 delta = self.radian_value - other.radian_value
-                return abs(delta) < epsilon
+                return abs(delta) < EPSILON
             else:
                 return False
         except AttributeError:
@@ -96,7 +97,7 @@ class Latitude(DdAngle):
     def __init__(self, value: float, rad_flag: bool):
         super().__init__(value, rad_flag)
 
-        if abs(self.radian_value) > math.pi / 2.0:
+        if abs(self.radian_value) > PI_HALF:
             raise ValueError("latitude exceeds 90 degrees")
 
 
