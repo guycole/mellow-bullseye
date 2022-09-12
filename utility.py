@@ -2,6 +2,7 @@
 # Title: utility.py
 # Description: helper class and methods
 # Development Environment:OS X 12.5.1/Python 3.9.13
+# Repository: https://github.com/guycole/mellow-bullseye
 #
 import math
 import typing
@@ -130,6 +131,7 @@ class Location:
             return self.lat == other.lat and self.lng == other.lng
         except AttributeError:
             return NotImplemented
+
 
 if __name__ == "__main__":
     print("main")
