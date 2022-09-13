@@ -7,8 +7,6 @@
 import math
 import typing
 
-earth_radius_statute_miles = 3963.3
-earth_radius_kilometers = 6378.3
 EPSILON = 1e-6
 FINAGLE = 1e6
 PI_HALF = math.pi/2.0
@@ -133,6 +131,19 @@ class Location:
         except AttributeError:
             return NotImplemented
 
+class Converter:
+    """simple conversion routines"""
+
+    def arc2sm(self, arg: float) -> float:
+        """arc to statute miles"""
+        return arg * 3963.3
+
+    def sm2arc(self, arg: float) -> float:
+        return arg/3963.3
+
+    def arc2klik(self, arg: float) -> float:
+        """arc to kilometers"""
+        return arg * 6378.3
 
 if __name__ == "__main__":
     print("main")
