@@ -1,6 +1,6 @@
 #
-# Title: utility.py
-# Description: helper class and methods
+# Title: station.py
+# Description: helper class and methods for managing stations
 # Development Environment:OS X 12.5.1/Python 3.9.13
 # Repository: https://github.com/guycole/mellow-bullseye
 #
@@ -94,11 +94,11 @@ class StationReader:
         station = Station(row_tokens[0], location)
         return station
 
-    def reader(self, file_name: str) -> typing.List[Station]:
-        """read a station file and return list of stations"""
+    def reader(self, file_name: str) -> typing.Dict[str, Station]:
+        """read a station file and return dictionary of stations"""
 
         buffer = []
-        results = []
+        results = {}
 
         if not os.path.isfile(file_name):
             print(f"missing station file {file_name}")
@@ -113,14 +113,28 @@ class StationReader:
         for current in buffer:
             parsed = self.parser(current)
             if parsed != None:
-                results.append(parsed)
+                results[parsed.key] = parsed
 
         return results
 
 
+class StationManager:
+
+    def __init__(self):
+        self.stations = {}
+
+    def read_stations(self, file_name: str) -> None:
+        sr = StationReader()
+        self.stations = sr.reader(file_name)
+        print(f"{len(self.stations)} stations read")
+        print(self.stations)
+
+    def get_station(self, key: str) -> Station:
+        return self.stations[key]
+
 if __name__ == "__main__":
     print("main")
 
-    sr = StationReader()
-    results = sr.reader("stations.dat")
-    print(results)
+    sm = StationManager()
+    sm.read_stations("stations.dat")
+    print(sm.get_station("sea"))
