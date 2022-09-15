@@ -98,11 +98,26 @@ class CaseReader:
 
         return self.parser(case_id, buffer)
 
+class CaseWriter:
+    def writer(self, file_name:str, case:Case) -> None:
+        print(file_name)
+        print()
+        try:
+            with open(file_name, "w") as case_file:
+                case_file.write(f"# {file_name}\n")
+                for current in case.observations:
+                    case_file.write(f"{current.station} {current.quality} {current.bearing}\n")
+        except:
+            print("file write error")
+            return None
 
 if __name__ == "__main__":
     print("main")
 
-    case = CaseReader()
-    result = case.reader("case/p00001")
+    cr = CaseReader()
+    result = cr.reader("case/p00001")
     print(result)
     print(result.observations)
+
+    cw = CaseWriter()
+    cw.writer("case/ptest", result)

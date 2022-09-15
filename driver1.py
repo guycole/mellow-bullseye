@@ -6,10 +6,11 @@
 #
 import math
 import station
+import utility
 
 if __name__ == "__main__":
     print("main")
 
-    sr = station.StationReader()
-    results = sr.reader("stations.dat")
-    print(results)
+    sm = station.StationManager()
+    sm.read_stations("stations.dat")
+    print(sm.get_station("sea"))
