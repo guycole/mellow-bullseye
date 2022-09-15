@@ -119,7 +119,6 @@ class StationReader:
 
 
 class StationManager:
-
     def __init__(self):
         self.stations = {}
 
@@ -131,6 +130,7 @@ class StationManager:
 
     def get_station(self, key: str) -> Station:
         return self.stations[key]
+
 
 if __name__ == "__main__":
     print("main")
