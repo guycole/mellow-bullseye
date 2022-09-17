@@ -131,6 +131,9 @@ class Location:
         except AttributeError:
             return NotImplemented
 
+#    def to_json(self):
+#        return [self.lat.dd_value, self.lng.dd_value]
+
 class Converter:
     """simple conversion routines"""
 
