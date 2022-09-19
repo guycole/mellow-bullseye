@@ -2,7 +2,7 @@
 Mellow Bullseye [HFDF](https://en.wikipedia.org/wiki/Direction_finding) location demonstration.
 
 ## Introduction
-How to determine transmitter location on a global scale using [HF radio](https://en.wikipedia.org/wiki/High_frequency)?  One approach would be to create a collection of stations scattered around the globe which could be tasked to monitor a radio frequency and return an observed bearing (and bearing quality).  Transmitter location could be calculated using the observed bearings.
+How to determine transmitter location on a global scale using [HF radio](https://en.wikipedia.org/wiki/High_frequency)?  One approach would be to create a collection of stations scattered around the globe which could be tasked to monitor a radio frequency and return an observed bearing (and bearing quality).  Transmitter location could be estimated using the observed bearings.
 
 ![graphic1](https://github.com/guycole/mellow-bullseye/blob/main/early.png)
 
