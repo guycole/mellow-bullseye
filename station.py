@@ -91,11 +91,6 @@ class StationManager:
     def read_stations(self, file_name: str) -> None:
         sr = StationReader()
         self.stations = sr.reader(file_name)
-<<<<<<< HEAD
-=======
-        print(f"{len(self.stations)} stations read")
-        print(self.stations)
->>>>>>> 5f49c775a9d197aa1ea974b0e40c2b25503f2c87
 
     def get_station(self, key: str) -> Station:
         return self.stations[key]
