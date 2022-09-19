@@ -77,18 +77,15 @@ class Location:
 
     def __eq__(self, other):
         try:
-#            lat1 = abs(self.lat.radian_value)
-#            lng1 = abs(self.lng)
-#            lat2 = abs(other.lat)
-#            lng2 = abs(other.lng)
-
-#            return (abs(lat1-lat2) < utility.EPSILON) and (abs(lng1-lng2) < utility.EPSILON)
-            
-            # TODO compare w/epsilon
             return self.lat == other.lat and self.lng == other.lng
         except AttributeError:
             return NotImplemented
 
+<<<<<<< HEAD
+=======
+#    def to_json(self):
+#        return [self.lat.dd_value, self.lng.dd_value]
+>>>>>>> 5f49c775a9d197aa1ea974b0e40c2b25503f2c87
 
 class Converter:
     """simple conversion routines"""
