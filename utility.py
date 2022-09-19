@@ -8,51 +8,7 @@ import math
 import typing
 
 EPSILON = 1e-6
-FINAGLE = 1e6
-PI_HALF = math.pi/2.0
-
-
-class DmsAngle:
-    """degrees, minutes, seconds container"""
-
-    def __init__(self, degree: int, minute: int, second: float):
-        self.dms_degree = degree
-        self.dms_minute = minute
-        self.dms_second = second
-
-        decimal_degree = abs(degree)
-        decimal_minute = minute / 60.0
-        decimal_second = second / 3600.0
-
-        # restrict the precision
-        temp = round((decimal_minute + decimal_second) * FINAGLE)
-        self.dms_converted = decimal_degree + temp / FINAGLE
-
-        # self.dms_converted = decimal_degree + decimal_minute + decimal_second
-        if degree < 0.0:
-            self.dms_converted = self.dms_converted * -1.0
-
-    def __repr__(self):
-        return str(self.dms_converted)
-
-    def __str__(self):
-        return f"{self.dms_degree}-{self.dms_minute}-{self.dms_second}"
-
-    def __hash__(self):
-        return hash(self.dms_converted)
-
-    def __eq__(self, other):
-        try:
-            flag1 = self.dms_converted < 0.0
-            flag2 = other.dms_converted < 0.0
-
-            if flag1 == flag2:
-                delta = self.dms_converted - other.dms_converted
-                return abs(delta) < EPSILON
-            else:
-                return False
-        except AttributeError:
-            return NotImplemented
+PI_HALF = math.pi / 2.0
 
 
 class DdAngle:
@@ -77,17 +33,11 @@ class DdAngle:
 
     def __eq__(self, other):
         try:
-            flag1 = self.radian_value < 0.0
-            flag2 = other.radian_value < 0.0
-
-            if flag1 == flag2:
-                delta = self.radian_value - other.radian_value
-                return abs(delta) < EPSILON
-            else:
-                return False
+            temp1 = abs(self.radian_value)
+            temp2 = abs(other.radian_value)
+            return abs(temp1-temp2) < EPSILON
         except AttributeError:
             return NotImplemented
-
 
 class Latitude(DdAngle):
     """latitude in decimal degrees"""
@@ -127,35 +77,42 @@ class Location:
 
     def __eq__(self, other):
         try:
+#            lat1 = abs(self.lat.radian_value)
+#            lng1 = abs(self.lng)
+#            lat2 = abs(other.lat)
+#            lng2 = abs(other.lng)
+
+#            return (abs(lat1-lat2) < utility.EPSILON) and (abs(lng1-lng2) < utility.EPSILON)
+            
+            # TODO compare w/epsilon
             return self.lat == other.lat and self.lng == other.lng
         except AttributeError:
             return NotImplemented
+
 
 class Converter:
     """simple conversion routines"""
 
     def arc2sm(self, arg: float) -> float:
         """arc to statute miles"""
-        return arg * 3963.3
+        return arg * 3958.8
 
     def sm2arc(self, arg: float) -> float:
-        return arg/3963.3
+        return arg / 3958.8
 
     def arc2klik(self, arg: float) -> float:
         """arc to kilometers"""
-        return arg * 6378.3
+        return arg * 6378.1
+
 
 if __name__ == "__main__":
     print("main")
 
-    dms1 = DmsAngle(11, 22, 33.44)
-    print(dms1)
-
-    dd1 = DdAngle(12.3456)
+    dd1 = DdAngle(12.3456, False)
     print(dd1)
 
-    lat1 = Latitude(dd1)
+    lat1 = Latitude(dd1.dd_value, False)
     print(lat1)
 
-    lng1 = Longitude(dd1)
+    lng1 = Longitude(dd1.dd_value, False)
     print(lng1)

@@ -1,6 +1,6 @@
 #
 # Title: gcircle_test.py
-# Description: test for GreatCircle
+# Description: great circle tests
 # Development Environment:OS X 12.5.1/Python 3.9.13
 # Repository: https://github.com/guycole/mellow-bullseye
 #
@@ -10,289 +10,114 @@ import pytest
 import gcircle
 import utility
 
-def test_gcrab1():
-    """source to dest is north"""
-    source_lat = utility.DdAngle(0.0, False)
-    source_lng = utility.DdAngle(0.0, False)
-    source_loc = utility.Location(source_lat, source_lng)
 
-    dest_lat = utility.DdAngle(2.0, False)
-    dest_lng = utility.DdAngle(0.0, False)
-    dest_loc = utility.Location(dest_lat, dest_lng)
+def test_si_wh():
+    skaggs_lat = utility.Latitude(38.1793681, False)
+    skaggs_lng = utility.Longitude(-122.3731450, False)
+    skaggs_loc = utility.Location(skaggs_lat, skaggs_lng)
 
-    gc = gcircle.GreatCircle()
-    (range, bearing) = gc.gcrab(source_loc, dest_loc)
-    assert range.radian_value == 0.03490658503988567
-    assert bearing.radian_value == 0.0
-
-    converter = utility.Converter()
-    print(f"gcrab1 {converter.arc2sm(range.radian_value)} {math.degrees(bearing.radian_value)}")
-    #assert False
-
-def test_gcrab2():
-    """source to dest is north east"""
-    source_lat = utility.DdAngle(0.0, False)
-    source_lng = utility.DdAngle(0.0, False)
-    source_loc = utility.Location(source_lat, source_lng)
-
-    dest_lat = utility.DdAngle(2.0, False)
-    dest_lng = utility.DdAngle(2.0, False)
-    dest_loc = utility.Location(dest_lat, dest_lng)
+    wh_lat = utility.Latitude(44.401111, False)
+    wh_lng = utility.Longitude(-67.991111, False)
+    wh_loc = utility.Location(wh_lat, wh_lng)
 
     gc = gcircle.GreatCircle()
-    (range, bearing) = gc.gcrab(source_loc, dest_loc)
-    assert range.radian_value == 0.04936035239379336
-    assert bearing.radian_value == 0.7850934841152278
 
-    converter = utility.Converter()
-    print(f"gcrab2 {converter.arc2sm(range.radian_value)} {math.degrees(bearing.radian_value)}")
-    #assert False
+    # skaggs island to winter harbor
+    (range1, azimuth) = gc.gcrab(skaggs_loc, wh_loc)
+    assert azimuth.radian_value == pytest.approx(1.103833696879552, utility.EPSILON)
+    assert range1.radian_value == pytest.approx(0.7081533619986511, utility.EPSILON)
 
-def test_gcrab3():
-    """source to dest is east"""
-    source_lat = utility.DdAngle(0.0, False)
-    source_lng = utility.DdAngle(0.0, False)
-    source_loc = utility.Location(source_lat, source_lng)
+    temp_loc = gc.razgc(skaggs_loc, range1, azimuth)
+    assert temp_loc == wh_loc
 
-    dest_lat = utility.DdAngle(0.0, False)
-    dest_lng = utility.DdAngle(2.0, False)
-    dest_loc = utility.Location(dest_lat, dest_lng)
+    # winter harbor to skaggs island
+    (range2, azimuth) = gc.gcrab(wh_loc, skaggs_loc)
+    assert azimuth.radian_value == pytest.approx(4.900004198967812, utility.EPSILON)
+    assert range2.radian_value == pytest.approx(range1.radian_value, utility.EPSILON)
 
-    gc = gcircle.GreatCircle()
-    (range, bearing) = gc.gcrab(source_loc, dest_loc)
-    assert range.radian_value == 0.03490658503988567
-    assert bearing.radian_value == 1.5707963267948966
+    temp_loc = gc.razgc(wh_loc, range2, azimuth)
+    assert temp_loc == skaggs_loc
 
-    converter = utility.Converter()
-    print(f"gcrab3 {converter.arc2sm(range.radian_value)} {math.degrees(bearing.radian_value)}")
-    #assert False
 
-def test_gcrab4():
-    """source to dest is south east"""
-    source_lat = utility.DdAngle(0.0, False)
-    source_lng = utility.DdAngle(0.0, False)
-    source_loc = utility.Location(source_lat, source_lng)
+def test_long0():
+    augsburg_lat = utility.Latitude(48.45, False)
+    augsburg_lng = utility.Longitude(10.863611, False)
+    augsburg_loc = utility.Location(augsburg_lat, augsburg_lng)
 
-    dest_lat = utility.DdAngle(-2.0, False)
-    dest_lng = utility.DdAngle(2.0, False)
-    dest_loc = utility.Location(dest_lat, dest_lng)
+    wh_lat = utility.Latitude(44.401111, False)
+    wh_lng = utility.Longitude(-67.991111, False)
+    wh_loc = utility.Location(wh_lat, wh_lng)
 
     gc = gcircle.GreatCircle()
-    (range, bearing) = gc.gcrab(source_loc, dest_loc)
-    assert range.radian_value == 0.04936035239379336
-    assert bearing.radian_value == 2.3564991694745654 
 
-    converter = utility.Converter()
-    print(f"gcrab4 {converter.arc2sm(range.radian_value)} {math.degrees(bearing.radian_value)}")
-    #assert False
+    # winter harbor to augsburg
+    (range1, azimuth) = gc.gcrab(wh_loc, augsburg_loc)
+    assert azimuth.radian_value == pytest.approx(0.9710389465471333, utility.EPSILON)
+    assert range1.radian_value == pytest.approx(0.9081281026712691, utility.EPSILON)
 
-def test_gcrab5():
-    """source to dest is south"""
-    source_lat = utility.DdAngle(0.0, False)
-    source_lng = utility.DdAngle(0.0, False)
-    source_loc = utility.Location(source_lat, source_lng)
+    temp_loc = gc.razgc(wh_loc, range1, azimuth)
+    assert temp_loc == augsburg_loc
 
-    dest_lat = utility.DdAngle(-2.0, False)
-    dest_lng = utility.DdAngle(0.0, False)
-    dest_loc = utility.Location(dest_lat, dest_lng)
+    # augsburg to winter harbor
+    (range2, azimuth) = gc.gcrab(augsburg_loc, wh_loc)
+    assert azimuth.radian_value == pytest.approx(5.187645334923327, utility.EPSILON)
+    assert range2.radian_value == pytest.approx(range1.radian_value, utility.EPSILON)
 
-    gc = gcircle.GreatCircle()
-    (range, bearing) = gc.gcrab(source_loc, dest_loc)
-    assert range.radian_value == 0.03490658503988567
-    assert bearing.radian_value == 3.141592653589793 
+    temp_loc = gc.razgc(augsburg_loc, range2, azimuth)
+    assert temp_loc == wh_loc
 
-    converter = utility.Converter()
-    print(f"gcrab5 {converter.arc2sm(range.radian_value)} {math.degrees(bearing.radian_value)}")
-    #assert False
 
-def test_gcrab6():
-    """source to dest is south west"""
-    source_lat = utility.DdAngle(0.0, False)
-    source_lng = utility.DdAngle(0.0, False)
-    source_loc = utility.Location(source_lat, source_lng)
+def test_long180():
+    wahiawa_lat = utility.Latitude(21.522222, False)
+    wahiawa_lng = utility.Longitude(-158.011389, False)
+    wahiawa_loc = utility.Location(wahiawa_lat, wahiawa_lng)
 
-    dest_lat = utility.DdAngle(-2.0, False)
-    dest_lng = utility.DdAngle(-2.0, False)
-    dest_loc = utility.Location(dest_lat, dest_lng)
+    finegayan_lat = utility.Latitude(13.593611, False)
+    finegayan_lng = utility.Longitude(144.8525, False)
+    finegayan_loc = utility.Location(finegayan_lat, finegayan_lng)
 
     gc = gcircle.GreatCircle()
-    (range, bearing) = gc.gcrab(source_loc, dest_loc)
-    assert range.radian_value == 0.04936035239379336
-    assert bearing.radian_value == 3.926686137705021 
 
-    converter = utility.Converter()
-    print(f"gcrab6 {converter.arc2sm(range.radian_value)} {math.degrees(bearing.radian_value)}")
-    #assert False
+    # wahiawa to finegayan
+    (range1, azimuth) = gc.gcrab(wahiawa_loc, finegayan_loc)
+    assert azimuth.radian_value == pytest.approx(4.74318012298315, utility.EPSILON)
+    assert range1.radian_value == pytest.approx(0.9558762231057704, utility.EPSILON)
 
-def test_gcrab7():
-    """source to dest is west"""
-    source_lat = utility.DdAngle(0.0, False)
-    source_lng = utility.DdAngle(0.0, False)
-    source_loc = utility.Location(source_lat, source_lng)
+    temp_loc = gc.razgc(wahiawa_loc, range1, azimuth)
+    assert temp_loc == finegayan_loc
 
-    dest_lat = utility.DdAngle(0.0, False)
-    dest_lng = utility.DdAngle(-2.0, False)
-    dest_loc = utility.Location(dest_lat, dest_lng)
+    # finegayan to wahiawa
+    (range2, azimuth) = gc.gcrab(finegayan_loc, wahiawa_loc)
+    assert azimuth.radian_value == pytest.approx(1.2752128093668078, utility.EPSILON)
+    assert range2.radian_value == pytest.approx(range1.radian_value, utility.EPSILON)
 
-    gc = gcircle.GreatCircle()
-    (range, bearing) = gc.gcrab(source_loc, dest_loc)
-    assert range.radian_value == 0.03490658503988567
-    assert bearing.radian_value == 4.71238898038469 
+    temp_loc = gc.razgc(finegayan_loc, range2, azimuth)
+    assert temp_loc == wahiawa_loc
 
-    converter = utility.Converter()
-    print(f"gcrab7 {converter.arc2sm(range.radian_value)} {math.degrees(bearing.radian_value)}")
-    #assert False
 
-def test_gcrab8():
-    """source to dest is north west"""
-    source_lat = utility.DdAngle(0.0, False)
-    source_lng = utility.DdAngle(0.0, False)
-    source_loc = utility.Location(source_lat, source_lng)
+def test_north_pole():
+    adak_lat = utility.Latitude(51.9425, False)
+    adak_lng = utility.Longitude(-176.600556, False)
+    adak_loc = utility.Location(adak_lat, adak_lng)
 
-    dest_lat = utility.DdAngle(2.0, False)
-    dest_lng = utility.DdAngle(-2.0, False)
-    dest_loc = utility.Location(dest_lat, dest_lng)
+    edzell_lat = utility.Latitude(56.809167, False)
+    edzell_lng = utility.Longitude(-2.605556, False)
+    edzell_loc = utility.Location(edzell_lat, edzell_lng)
 
     gc = gcircle.GreatCircle()
-    (range, bearing) = gc.gcrab(source_loc, dest_loc)
-    assert range.radian_value == 0.04936035239379336
-    assert bearing.radian_value == 5.4980918230643585
 
-    converter = utility.Converter()
-    print(f"gcrab8 {converter.arc2sm(range.radian_value)} {math.degrees(bearing.radian_value)}")
-    #assert False
+    # adak to edzell
+    (range1, azimuth) = gc.gcrab(adak_loc, edzell_loc)
+    assert azimuth.radian_value == pytest.approx(0.06055698411302806, utility.EPSILON)
+    assert range1.radian_value == pytest.approx(1.241561805890704, utility.EPSILON)
 
-def test_gcraz1():
-    """source to dest is north"""
-    source_lat = utility.DdAngle(0.0, False)
-    source_lng = utility.DdAngle(0.0, False)
-    source_loc = utility.Location(source_lat, source_lng)
+    temp_loc = gc.razgc(adak_loc, range1, azimuth)
+    assert temp_loc == edzell_loc
 
-    converter = utility.Converter()
+    # edzell to adak
+    (range2, azimuth) = gc.gcrab(edzell_loc, adak_loc)
+    assert azimuth.radian_value == pytest.approx(6.214981799746803, utility.EPSILON)
+    assert range2.radian_value == pytest.approx(range1.radian_value, utility.EPSILON)
 
-    range = utility.DdAngle(converter.sm2arc(200.0), True)
-    azimuth = utility.DdAngle(0.0, True)
-
-    gc = gcircle.GreatCircle()
-    dest_loc = gc.razgc(source_loc, range, azimuth)
-    print(f"gcraz1 {dest_loc.lat.dd_value}:{dest_loc.lng.dd_value}")
-#    assert False
-
-def test_gcraz2():
-    """source to dest is north east"""
-    source_lat = utility.DdAngle(0.0, False)
-    source_lng = utility.DdAngle(0.0, False)
-    source_loc = utility.Location(source_lat, source_lng)
-
-    converter = utility.Converter()
-
-    range = utility.DdAngle(converter.sm2arc(200.0), True)
-    azimuth = utility.DdAngle(math.pi/4, True)
-
-    gc = gcircle.GreatCircle()
-    dest_loc = gc.razgc(source_loc, range, azimuth)
-    print(dest_loc)
-    print(f"gcraz2 {dest_loc.lat.dd_value}:{dest_loc.lng.dd_value}")
-#    assert False
-
-def test_gcraz3():
-    """source to dest is east"""
-    source_lat = utility.DdAngle(0.0, False)
-    source_lng = utility.DdAngle(0.0, False)
-    source_loc = utility.Location(source_lat, source_lng)
-
-    converter = utility.Converter()
-
-    range = utility.DdAngle(converter.sm2arc(200.0), True)
-    azimuth = utility.DdAngle(math.pi/2, True)
-
-    gc = gcircle.GreatCircle()
-    dest_loc = gc.razgc(source_loc, range, azimuth)
-    print(dest_loc)
-    print(f"gcraz3 {dest_loc.lat.dd_value}:{dest_loc.lng.dd_value}")
-#    assert False
-
-def test_gcraz4():
-    """source to dest is south east"""
-    source_lat = utility.DdAngle(0.0, False)
-    source_lng = utility.DdAngle(0.0, False)
-    source_loc = utility.Location(source_lat, source_lng)
-
-    converter = utility.Converter()
-
-    range = utility.DdAngle(converter.sm2arc(200.0), True)
-    azimuth = utility.DdAngle(3*math.pi/4, True)
-
-    gc = gcircle.GreatCircle()
-    dest_loc = gc.razgc(source_loc, range, azimuth)
-    print(dest_loc)
-    print(f"gcraz4 {dest_loc.lat.dd_value}:{dest_loc.lng.dd_value}")
-#    assert False
-
-def test_gcraz5():
-    """source to dest is south"""
-    source_lat = utility.DdAngle(0.0, False)
-    source_lng = utility.DdAngle(0.0, False)
-    source_loc = utility.Location(source_lat, source_lng)
-
-    converter = utility.Converter()
-
-    range = utility.DdAngle(converter.sm2arc(200.0), True)
-    azimuth = utility.DdAngle(math.pi, True)
-
-    gc = gcircle.GreatCircle()
-    dest_loc = gc.razgc(source_loc, range, azimuth)
-    print(dest_loc)
-    print(f"gcraz5 {dest_loc.lat.dd_value}:{dest_loc.lng.dd_value}")
-#    assert False
-
-def test_gcraz6():
-    """source to dest is south west"""
-    source_lat = utility.DdAngle(0.0, False)
-    source_lng = utility.DdAngle(0.0, False)
-    source_loc = utility.Location(source_lat, source_lng)
-
-    converter = utility.Converter()
-
-    range = utility.DdAngle(converter.sm2arc(200.0), True)
-    azimuth = utility.DdAngle(5*math.pi/4, True)
-
-    gc = gcircle.GreatCircle()
-    dest_loc = gc.razgc(source_loc, range, azimuth)
-    print(dest_loc)
-    print(f"gcraz6 {dest_loc.lat.dd_value}:{dest_loc.lng.dd_value}")
-#    assert False
-
-def test_gcraz7():
-    """source to dest is west"""
-    source_lat = utility.DdAngle(0.0, False)
-    source_lng = utility.DdAngle(0.0, False)
-    source_loc = utility.Location(source_lat, source_lng)
-
-    converter = utility.Converter()
-
-    range = utility.DdAngle(converter.sm2arc(200.0), True)
-    azimuth = utility.DdAngle(3*math.pi/2, True)
-
-    gc = gcircle.GreatCircle()
-    dest_loc = gc.razgc(source_loc, range, azimuth)
-    print(dest_loc)
-    print(f"gcraz7 {dest_loc.lat.dd_value}:{dest_loc.lng.dd_value}")
-#    assert False
-
-def test_gcraz8():
-    """source to dest is north west"""
-    source_lat = utility.DdAngle(0.0, False)
-    source_lng = utility.DdAngle(0.0, False)
-    source_loc = utility.Location(source_lat, source_lng)
-
-    converter = utility.Converter()
-
-    range = utility.DdAngle(converter.sm2arc(200.0), True)
-    azimuth = utility.DdAngle(7*math.pi/4, True)
-
-    gc = gcircle.GreatCircle()
-    dest_loc = gc.razgc(source_loc, range, azimuth)
-    print(dest_loc)
-    print(f"gcraz8 {dest_loc.lat.dd_value}:{dest_loc.lng.dd_value}")
-#    assert False
+    temp_loc = gc.razgc(edzell_loc, range2, azimuth)
+    assert temp_loc == adak_loc
