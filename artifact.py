@@ -16,10 +16,14 @@ import utility
 class Observation:
     """container for observations"""
 
-    def __init__(self, station: str, quality: str, bearing: utility.DdAngle):
+    def __init__(self, station: str, quality: str, id_certain: bool, bearing: utility.DdAngle):
+        self.bearing_used = False
+        self.id_certain = id_certain
         self.station = station
         self.quality = quality
         self.bearing = bearing
+
+        # todo test for legal bearing quality
 
     def __repr__(self):
         return f"{self.station}:{self.quality}:{self.bearing}"
@@ -38,13 +42,16 @@ class Observation:
 
 
 class Artifact:
-    """container for artifact, id is the same as filename"""
+    """artifact contains observations and fix results"""
 
     def __init__(self, id: str):
+        self.actual_location = None
+        self.callsign = None
+        self.estimated_location = None
+        self.fix_algorithm = None
         self.id = id
         self.observations = []
-        self.actual_location = None
-        self.estimated_location = None
+        self.radio_frequency = 0
         self.time_stamp = int(time.time())
         self.version = 1
 
@@ -69,8 +76,18 @@ class ArtifactReadWrite:
         """parse a artifact file"""
 
         artifact = Artifact(buffer["id"])
+        artifact.version = buffer["version"]
 
         # todo test for json schema version
+
+        artifact.radio_frequency = buffer["radio_frequency"]
+        artifact.time_stamp = buffer["time_stamp"]
+
+        if "callsign" in buffer:
+            artifact.callsign = buffer["callsign"]
+
+        if "fix_algorithm" in buffer:
+            artifact.fix_algorithm = buffer["fix_algorithm"]
 
         if "actual_location" in buffer:
             temp = buffer["actual_location"]
@@ -86,10 +103,8 @@ class ArtifactReadWrite:
             temp_loc = utility.Location(temp_lat, temp_lng)
             artifact.estimated_location = temp_loc
 
-        artifact.time_stamp = buffer["time_stamp"]
-
         for ndx in buffer["observations"]:
-            obs = Observation(ndx[0], ndx[1], utility.DdAngle(ndx[2], False))
+            obs = Observation(ndx[0], ndx[1], ndx[2], utility.DdAngle(ndx[3], False))
             artifact.observations.append(obs)
 
         return artifact
@@ -113,13 +128,20 @@ class ArtifactReadWrite:
     def writer(self, file_name: str, artifact: Artifact) -> None:
         observations = []
         for current in artifact.observations:
-            temp = [current.station, current.quality, current.bearing.dd_value]
+            temp = [current.station, current.quality, current.id_certain, current.bearing.dd_value]
             observations.append(temp)
 
         buffer = {}
         buffer["id"] = artifact.id
+        buffer["radio_frequency"] = artifact.radio_frequency
         buffer["time_stamp"] = artifact.time_stamp
         buffer["version"] = 1
+
+        if artifact.callsign is not None:
+            buffer["callsign"] = artifact.callsign
+
+        if artifact.fix_algorithm is not None:
+            buffer["fix_algorithm"] = artifact.fix_algorithm
 
         if artifact.actual_location is not None:
             buffer["actual_location"] = [
