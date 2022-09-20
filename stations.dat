@@ -1,8 +1,9 @@
-# station ID, latitude, longitude in decimal degrees +North +East
-anc 61.174085 -149.998137
-hnd 35.553333 139.781111
-hnl 21.317817 -157.920228
-gum 13.483951 144.797127
-san 32.733563 -117.189663
-sea 47.449889 -122.311778 
-sfo 37.618806 -122.375417
+# station ID, equipment, latitude, longitude in decimal degrees +North +East
+# legal equipment type: grd6, frd10, flr9, pusher, outboard, experiment
+anc frd10 61.174085 -149.998137
+hnd frd10 35.553333 139.781111 
+hnl frd10 21.317817 -157.920228 
+gum frd10 13.483951 144.797127
+san frd10 32.733563 -117.189663
+sea frd10 47.449889 -122.311778
+sfo frd10 37.618806 -122.375417 

@@ -125,7 +125,7 @@ if __name__ == "__main__":
     sm = station.StationManager()
     sm.read_stations("stations.dat")
 
-    ar = artifact.ArtifactReader()
+    ar = artifact.ArtifactReadWrite()
     artifact = ar.reader("artifact_in/p00114")
 
     mw = MapWrapper(sm)

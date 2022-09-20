@@ -14,7 +14,7 @@ class ArtifactGenerator:
 
     def __init__(self, file_name):
         self.sm = station.StationManager()
-        self.sm.read_stations("stations.dat")
+        self.sm.read_stations(file_name)
 
     def generate_artifact(self, id:str, target_loc:utility.Location) -> artifact.Artifact:
         results = artifact.Artifact(id)
