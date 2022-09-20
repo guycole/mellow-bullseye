@@ -16,9 +16,6 @@
 #C               COORDINATES: ELLIPTICAL & CIRCULAR AREAS OF UNCERTAINTY 
 #C               ARE PROVIDED.
 #
-# Thanks to the PAGlets, especially Rich Lomax
-# Shout out to Wayne Bratt and all the great folks at NOSC, wherever you are.
-#
 
 import artifact
 import station
