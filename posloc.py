@@ -27,8 +27,61 @@ class PosLoc:
         self.sm = station.StationManager()
         self.sm.read_stations(file_name)
 
+    def pos_initial(self):
+        pass
+
+    def pddg(self, artifact: artifact.Artifact):
+        for ndx in artifact.observations:
+            station = self.sm.get_station(ndx.station)
+            if station.equipment == 'grd6':
+                ndx.weight = 0.1 # does original really discard grd6 bearings?
+            else:
+                ndx.weight = 1.0
+
+    def convert(self):
+        pass
+
+    def xform(self):
+        pass
+
+    def xprodbpe(self, artifact:artifact.Artifact):
+        obz = artifact.observations
+
+        for ndx1, obs in enumerate(artifact.observations):
+            print(ndx1)
+            print(obs)
+          
+
     def fix(self, artifact: artifact.Artifact):
         print("PosLoc")
+    
+        # id = station name
+        # s1 = station lat rads
+        # stalat = station lat degs
+        # stalon = station lon degs
+        # s2 = staion long rads
+        # s3 = station sin lat
+        # s4 = 0.03 (??)
+        # c2 = station cos lat
+        # n2 = type equipment?
+        # b1 = bearing rads
+        # b2 = bearing error
+        # p2 = algo pass counter
+        # n1 = flag
+        # o1 = flag
+        # w = bearing weight
+        # c3 = mystery 18 element array 
+
+
+        self.pos_initial()
+        self.pddg(artifact)
+        self.convert()
+        self.xform()
+        self.xprodbpe(artifact)
+
+        print(artifact.observations)
+
+#        artifact.estimated_location = fix_loc
 
 if __name__ == "__main__":
     print("main")
@@ -38,3 +91,4 @@ if __name__ == "__main__":
 
     posloc = PosLoc("stations.dat")
     posloc.fix(artifact)
+    print(artifact)

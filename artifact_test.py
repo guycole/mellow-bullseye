@@ -31,7 +31,7 @@ def test_artifact():
     
     aa = arw.reader("/tmp/pytest")
     assert aa.actual_location == loc1
-    assert aa.estimated_location is None
+    assert aa.ellipse_location is None
     assert aa.callsign == 'UREZ'
     assert aa.fix_algorithm == 'testaroo'
     assert aa.id == 'pytest'

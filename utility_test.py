@@ -16,8 +16,8 @@ def test_latitude():
 
     lat3 = utility.Latitude(math.pi / 4.0, True)
     assert str(lat3) == "45.0"
-    assert lat3.dd_value == 45.0
-    assert lat3.radian_value == 0.7853981633974483
+    assert lat3.dd_val == 45.0
+    assert lat3.rad_val == 0.7853981633974483
 
     lat4 = utility.DdAngle(math.pi / 4.0, True)
     assert lat3 == lat4
@@ -29,8 +29,8 @@ def test_latitude():
 
     lat5 = utility.Latitude(-math.pi / 4.0, True)
     assert str(lat5) == "-45.0"
-    assert lat5.dd_value == -45.0
-    assert lat5.radian_value == -0.7853981633974483
+    assert lat5.dd_val == -45.0
+    assert lat5.rad_val == -0.7853981633974483
 
     lat6 = utility.Latitude(-math.pi / 4.0, True)
     assert lat5 == lat6
@@ -50,8 +50,8 @@ def test_longitude():
 
     lng3 = utility.Longitude(math.pi / 4.0, True)
     assert str(lng3) == "45.0"
-    assert lng3.dd_value == 45.0
-    assert lng3.radian_value == 0.7853981633974483
+    assert lng3.dd_val == 45.0
+    assert lng3.rad_val == 0.7853981633974483
 
     lng4 = utility.Longitude(math.pi / 4.0, True)
     assert lng3 == lng4
@@ -63,8 +63,8 @@ def test_longitude():
 
     lng5 = utility.Longitude(-math.pi / 4.0, True)
     assert str(lng5) == "-45.0"
-    assert lng5.dd_value == -45.0
-    assert lng5.radian_value == -0.7853981633974483
+    assert lng5.dd_val == -45.0
+    assert lng5.rad_val == -0.7853981633974483
 
     lng6 = utility.Longitude(-math.pi / 4.0, True)
     assert lng5 == lng6

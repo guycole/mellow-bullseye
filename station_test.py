@@ -17,5 +17,5 @@ def test_station_manager():
 
     candidate = sm.get_station("sea")
     assert candidate.equipment == 'frd10'
-    assert candidate.location.lat.radian_value == 0.8281567927558396
-    assert candidate.location.lng.radian_value == -2.134743240068365
+    assert candidate.location.lat.rad_val == 0.8281567927558396
+    assert candidate.location.lng.rad_val == -2.134743240068365

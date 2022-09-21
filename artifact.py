@@ -14,22 +14,23 @@ import utility
 
 
 class Observation:
-    """container for observations"""
+    """container for observations, nil heard/no bearing results are not retained"""
 
     def __init__(self, station: str, quality: str, id_certain: bool, bearing: utility.DdAngle):
+        self.bearing = bearing
         self.bearing_used = False
         self.id_certain = id_certain
-        self.station = station
         self.quality = quality
-        self.bearing = bearing
+        self.station = station
+        self.weight = 0
 
         # todo test for legal bearing quality
 
     def __repr__(self):
-        return f"{self.station}:{self.quality}:{self.bearing}"
+        return f"{self.station}:{self.quality}:{self.id_certain}:{self.bearing}:{self.bearing_used}"
 
     def __str__(self):
-        return f"{self.station}:{self.quality}:{self.bearing}"
+        return f"{self.station}:{self.quality}:{self.id_certain}:{self.bearing}:{self.bearing_used}"
 
     def __hash__(self):
         return hash(self.station)
@@ -45,14 +46,18 @@ class Artifact:
     """artifact contains observations and fix results"""
 
     def __init__(self, id: str):
-        self.actual_location = None
+        self.actual_location = None 
         self.callsign = None
-        self.estimated_location = None
+        self.ellipse_area = 0
+        self.ellipse_location = None
+        self.ellipse_major = 0
+        self.ellipse_minor = 0
+        self.ellipse_orientation = None
         self.fix_algorithm = None
         self.id = id
         self.observations = []
         self.radio_frequency = 0
-        self.time_stamp = int(time.time())
+        self.time_stamp = int(time.time()) # UTC epoch time
         self.version = 1
 
     def __repr__(self):
@@ -96,15 +101,23 @@ class ArtifactReadWrite:
             temp_loc = utility.Location(temp_lat, temp_lng)
             artifact.actual_location = temp_loc
 
-        if "estimated_location" in buffer:
-            temp = buffer["estimated_location"]
+        if "ellipse_location" in buffer:
+            temp = buffer["ellipse_location"]
             temp_lat = utility.DdAngle(temp[0], False)
             temp_lng = utility.DdAngle(temp[1], False)
             temp_loc = utility.Location(temp_lat, temp_lng)
-            artifact.estimated_location = temp_loc
+            artifact.ellipse_location = temp_loc
+
+            temp = buffer["ellipse_orientation"]
+            artifact.ellipse_orientation = utility.DdAngle(temp, False)
+
+            artifact.ellipse_area = buffer["ellipse_area"]
+            artifact.ellipse_major = buffer["ellipse_major"]
+            artifact.ellipse_minor = buffer["ellipse_minor"]
 
         for ndx in buffer["observations"]:
             obs = Observation(ndx[0], ndx[1], ndx[2], utility.DdAngle(ndx[3], False))
+            obs.bearing_used = ndx[4]
             artifact.observations.append(obs)
 
         return artifact
@@ -126,11 +139,6 @@ class ArtifactReadWrite:
         return self.parser(buffer)
 
     def writer(self, file_name: str, artifact: Artifact) -> None:
-        observations = []
-        for current in artifact.observations:
-            temp = [current.station, current.quality, current.id_certain, current.bearing.dd_value]
-            observations.append(temp)
-
         buffer = {}
         buffer["id"] = artifact.id
         buffer["radio_frequency"] = artifact.radio_frequency
@@ -145,15 +153,25 @@ class ArtifactReadWrite:
 
         if artifact.actual_location is not None:
             buffer["actual_location"] = [
-                artifact.actual_location.lat.dd_value,
-                artifact.actual_location.lng.dd_value,
+                artifact.actual_location.lat.dd_val,
+                artifact.actual_location.lng.dd_val,
             ]
 
-        if artifact.estimated_location is not None:
-            buffer["estimated_location"] = [
-                artifact.estimated_location.lat.dd_value,
-                artifact.estimated_location.lng.dd_value,
+        if artifact.ellipse_location is not None:
+            buffer["ellipse_location"] = [
+                artifact.ellipse_location.lat.dd_val,
+                artifact.ellipse_location.lng.dd_val,
             ]
+
+            buffer["ellipse_area"] = artifact.ellipse_area
+            buffer["ellipse_major"] = artifact.ellipse_major
+            buffer["ellipse_minor"] = artifact.ellipse_minor
+            buffer["ellipse_orientation"] = artifact.ellipse_orientation.dd_val
+
+        observations = []
+        for current in artifact.observations:
+            temp = [current.station, current.quality, current.id_certain, current.bearing.dd_val, current.bearing_used]
+            observations.append(temp)
 
         buffer["observations"] = observations
 

@@ -22,29 +22,29 @@ class GreatCircle:
             azimuth = utility.DdAngle(0.0, True)
             return (range, azimuth)
 
-        csn1 = math.cos(source.lng.radian_value)
-        snn1 = math.sin(source.lng.radian_value)
+        csn1 = math.cos(source.lng.rad_val)
+        snn1 = math.sin(source.lng.rad_val)
 
-        cst1 = math.cos(source.lat.radian_value)
-        snt1 = math.sin(source.lat.radian_value)
+        cst1 = math.cos(source.lat.rad_val)
+        snt1 = math.sin(source.lat.rad_val)
 
-        csn2 = math.cos(destination.lng.radian_value)
-        snn2 = math.sin(destination.lng.radian_value)
+        csn2 = math.cos(destination.lng.rad_val)
+        snn2 = math.sin(destination.lng.rad_val)
 
-        cst2 = math.cos(destination.lat.radian_value)
-        snt2 = math.sin(destination.lat.radian_value)
+        cst2 = math.cos(destination.lat.rad_val)
+        snt2 = math.sin(destination.lat.rad_val)
 
         range = csn1 * cst1 * csn2 * cst2 + snn1 * cst1 * snn2 * cst2 + snt1 * snt2
         range = utility.DdAngle(math.acos(range), True)
         azimuth = utility.DdAngle(0.0, True)
 
-        if range.radian_value > utility.EPSILON:
+        if range.rad_val > utility.EPSILON:
             xx = -csn1 * snt1 * csn2 * cst2 - snn1 * snt1 * snn2 * cst2 + cst1 * snt2
             yy = -snn1 * csn2 * cst2 + csn1 * snn2 * cst2
             azimuth = utility.DdAngle(math.atan2(yy, xx), True)
-            if azimuth.radian_value < 0.0:
+            if azimuth.rad_val < 0.0:
                 # azimuth 0 is north, positive clockwise
-                azimuth = utility.DdAngle(azimuth.radian_value + math.pi * 2.0, True)
+                azimuth = utility.DdAngle(azimuth.rad_val + math.pi * 2.0, True)
 
         return (range, azimuth)
 
@@ -53,17 +53,17 @@ class GreatCircle:
     ) -> utility.Location:
         """calculate great circle location given origin, range and bearing"""
 
-        csnf = math.cos(source.lng.radian_value)
-        snnf = math.sin(source.lng.radian_value)
+        csnf = math.cos(source.lng.rad_val)
+        snnf = math.sin(source.lng.rad_val)
 
-        cstf = math.cos(source.lat.radian_value)
-        sntf = math.sin(source.lat.radian_value)
+        cstf = math.cos(source.lat.rad_val)
+        sntf = math.sin(source.lat.rad_val)
 
-        csb = math.cos(azimuth.radian_value)
-        snb = math.sin(azimuth.radian_value)
+        csb = math.cos(azimuth.rad_val)
+        snb = math.sin(azimuth.rad_val)
 
-        csd = math.cos(range.radian_value)
-        snd = math.sin(range.radian_value)
+        csd = math.cos(range.rad_val)
+        snd = math.sin(range.rad_val)
 
         rxf = csnf * cstf
         ryf = snnf * cstf
@@ -103,9 +103,9 @@ if __name__ == "__main__":
     gc = GreatCircle()
     (range, azimuth) = gc.gcrab(skaggs_loc, wh_loc)
 
-    print(f"skaggs island to winter harbor bearing {azimuth.dd_value}")
+    print(f"skaggs island to winter harbor bearing {azimuth.dd_val}")
     print(
-        f"skaggs island to winter harbor distance {converter.arc2sm(range.radian_value)} SM"
+        f"skaggs island to winter harbor distance {converter.arc2sm(range.rad_val)} SM"
     )
 
     temp_loc = gc.razgc(skaggs_loc, range, azimuth)

@@ -16,25 +16,25 @@ class DdAngle:
 
     def __init__(self, value: float, radian_flag: bool):
         if radian_flag:
-            self.dd_value = math.degrees(value)
-            self.radian_value = value
+            self.dd_val = math.degrees(value)
+            self.rad_val = value
         else:
-            self.dd_value = value
-            self.radian_value = math.radians(value)
+            self.dd_val = value
+            self.rad_val = math.radians(value)
 
     def __repr__(self):
-        return str(self.dd_value)
+        return str(self.dd_val)
 
     def __str__(self):
-        return str(self.dd_value)
+        return str(self.dd_val)
 
     def __hash__(self):
-        return hash(self.radian_value)
+        return hash(self.rad_val)
 
     def __eq__(self, other):
         try:
-            temp1 = abs(self.radian_value)
-            temp2 = abs(other.radian_value)
+            temp1 = abs(self.rad_val)
+            temp2 = abs(other.rad_val)
             return abs(temp1-temp2) < EPSILON
         except AttributeError:
             return NotImplemented
@@ -45,7 +45,7 @@ class Latitude(DdAngle):
     def __init__(self, value: float, rad_flag: bool):
         super().__init__(value, rad_flag)
 
-        if abs(self.radian_value) > PI_HALF:
+        if abs(self.rad_val) > PI_HALF:
             raise ValueError("latitude exceeds 90 degrees")
 
 
@@ -55,7 +55,7 @@ class Longitude(DdAngle):
     def __init__(self, value: float, rad_flag):
         super().__init__(value, rad_flag)
 
-        if abs(self.radian_value) > math.pi:
+        if abs(self.rad_val) > math.pi:
             raise ValueError("longitude exceeds 180 degrees")
 
 
@@ -81,6 +81,12 @@ class Location:
         except AttributeError:
             return NotImplemented
 
+    def phi(self) -> float:
+        return 0
+
+    def theta(self) -> float:
+        return 0
+
 class Converter:
     """simple conversion routines"""
 
@@ -102,8 +108,8 @@ if __name__ == "__main__":
     dd1 = DdAngle(12.3456, False)
     print(dd1)
 
-    lat1 = Latitude(dd1.dd_value, False)
+    lat1 = Latitude(dd1.dd_val, False)
     print(lat1)
 
-    lng1 = Longitude(dd1.dd_value, False)
+    lng1 = Longitude(dd1.dd_val, False)
     print(lng1)

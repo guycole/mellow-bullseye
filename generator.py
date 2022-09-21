@@ -24,7 +24,7 @@ class ArtifactGenerator:
         for key in self.sm.stations:
             station = self.sm.get_station(key)
             (range, bearing) = gc.gcrab(station.location, target_loc)
-            results.observations.append(artifact.Observation(key, "A", bearing))
+            results.observations.append(artifact.Observation(key, "A", True, bearing))
 
         return results
 

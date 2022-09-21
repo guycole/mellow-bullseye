@@ -14,19 +14,22 @@ import utility
 class Station:
     """container for stations"""
 
-    def __init__(self, key: str, equipment: str, location: utility.Location):
+    def __init__(
+        self, key: str, equipment: str, variance: int, location: utility.Location
+    ):
         self.equipment = equipment
         self.key = key.strip()
         self.location = location
+        self.variance = variance
 
         # station key always 3 characters
         if len(self.key) != 3:
-            raise ValueError('bad station key')
+            raise ValueError("bad station key")
 
         # test for legal equipment
-        legal_equipment = ['grd6', 'frd10', 'flr9', 'pusher', 'outboard', 'experiment']
+        legal_equipment = ["grd6", "frd10", "flr9", "pusher", "outboard", "experiment"]
         if equipment not in legal_equipment:
-            raise ValueError('bad equipment type')
+            raise ValueError("bad equipment type")
 
     def __repr__(self):
         return f"{self.key}:{self.equipment}:{self.location}"
@@ -54,20 +57,20 @@ class StationReader:
             return None
 
         row_tokens = candidate.split(" ")
-        if len(row_tokens) != 4:
+        if len(row_tokens) != 5:
             print("skipping bad line")
             return None
 
         # latitude in dd form
-        dd_lat = utility.DdAngle(float(row_tokens[2]), False)
+        dd_lat = utility.DdAngle(float(row_tokens[3]), False)
 
         # longitude in dd form
-        dd_lng = utility.DdAngle(float(row_tokens[3]), False)
+        dd_lng = utility.DdAngle(float(row_tokens[4]), False)
 
         # location
         location = utility.Location(dd_lat, dd_lng)
 
-        station = Station(row_tokens[0], row_tokens[1], location)
+        station = Station(row_tokens[0], row_tokens[1], row_tokens[2], location)
         return station
 
     def reader(self, file_name: str) -> typing.Dict[str, Station]:
