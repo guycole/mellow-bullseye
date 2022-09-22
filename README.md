@@ -18,5 +18,5 @@ How to determine transmitter location on a global scale using [HF radio](https:/
 + locations in decimal degrees (no DMS) +North, +East
 + bearings are always positive, clockwise from true north
 
-## Credits
-+ I am not the original author for any of these fix algorithm.  The fix algorithms here are ported from either FORTRAN or NELIAC as I have time and interest.  
+## References
++ [1] Robin Felix, “High Frequency Direction Finding: Errors, Algorithms, and Outboard," Masters Thesis (NPS62-82-046), Naval Posgraduate School, Monterey, CA 93940
