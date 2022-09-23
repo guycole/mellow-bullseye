@@ -2,3 +2,5 @@ will not compile using gfortran, missing comblk, lib$sig_to_ret
 
 gfortran no longer supports f77?  
 
+debian still has fort77 (f2c) 
+
