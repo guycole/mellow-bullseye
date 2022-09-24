@@ -11,16 +11,42 @@ import utility
 
 
 class GreatCircle:
-    def gcrab(
+    """
+    great circle support
+    """
+
+    def gcdaz(
         self, source: utility.Location, destination: utility.Location
     ) -> typing.Tuple[utility.DdAngle, utility.DdAngle]:
-        """calculate great circle range and bearing between two points"""
+        """
+        Calculate great circle distance and azimuth between two points on earths surface.
+        Originally written in FORTRAN by Jim Martin, 1985
+
+        Args:
+            source (utility.Location): source location
+            destination (utility.Location): destination location
+
+        Returns:
+            typing.Tuple[utility.DdAngle, utility.DdAngle]: azimuth, distance
+        """
 
         if source == destination:
             # coincident location
-            range = utility.DdAngle(0.0, True)
             azimuth = utility.DdAngle(0.0, True)
-            return (range, azimuth)
+            distance = utility.DdAngle(0.0, True)
+            return (azimuth, distance)
+
+        if abs(source.lat.rad_val - utility.PI_HALF) < utility.EPSILON:
+            # source is north pole
+            azimuth = utility.DdAngle(math.pi, True)
+            distance = utility.DdAngle(utiity.PI_HALF - destination.lat.rad_val, True)
+            return (azimuth, distance)
+
+        if abs(source.lat.rad_val + utility.PI_HALF) < utility.EPSILON:
+            # source is south pole
+            azimuth = utility.DdAngle(0.0, True)
+            distance = utility.DdAngle(utiity.PI_HALF + destination.lat.rad_val, True)
+            return (azimuth, distance)
 
         csn1 = math.cos(source.lng.rad_val)
         snn1 = math.sin(source.lng.rad_val)
@@ -34,11 +60,11 @@ class GreatCircle:
         cst2 = math.cos(destination.lat.rad_val)
         snt2 = math.sin(destination.lat.rad_val)
 
-        range = csn1 * cst1 * csn2 * cst2 + snn1 * cst1 * snn2 * cst2 + snt1 * snt2
-        range = utility.DdAngle(math.acos(range), True)
+        temp = csn1 * cst1 * csn2 * cst2 + snn1 * cst1 * snn2 * cst2 + snt1 * snt2
+        distance = utility.DdAngle(math.acos(temp), True)
         azimuth = utility.DdAngle(0.0, True)
 
-        if range.rad_val > utility.EPSILON:
+        if distance.rad_val > utility.EPSILON:
             xx = -csn1 * snt1 * csn2 * cst2 - snn1 * snt1 * snn2 * cst2 + cst1 * snt2
             yy = -snn1 * csn2 * cst2 + csn1 * snn2 * cst2
             azimuth = utility.DdAngle(math.atan2(yy, xx), True)
@@ -46,12 +72,25 @@ class GreatCircle:
                 # azimuth 0 is north, positive clockwise
                 azimuth = utility.DdAngle(azimuth.rad_val + math.pi * 2.0, True)
 
-        return (range, azimuth)
+        return (azimuth, distance)
 
-    def razgc(
-        self, source: utility.Location, range: utility.DdAngle, azimuth: utility.DdAngle
+    def dazgc(
+        self,
+        source: utility.Location,
+        azimuth: utility.DdAngle,
+        distance: utility.DdAngle,
     ) -> utility.Location:
-        """calculate great circle location given origin, range and bearing"""
+        """
+        Given an source, azimuth and distance return a location
+
+        Args:
+            source (utility.Location): source location
+            azimuth (utility.DdAngle): bearing (radians) from North, clockwise
+            distance (utility.DdAngle): distance (radians)
+
+        Returns:
+            utility.Location: destination
+        """
 
         csnf = math.cos(source.lng.rad_val)
         snnf = math.sin(source.lng.rad_val)
@@ -62,8 +101,8 @@ class GreatCircle:
         csb = math.cos(azimuth.rad_val)
         snb = math.sin(azimuth.rad_val)
 
-        csd = math.cos(range.rad_val)
-        snd = math.sin(range.rad_val)
+        csd = math.cos(distance.rad_val)
+        snd = math.sin(distance.rad_val)
 
         rxf = csnf * cstf
         ryf = snnf * cstf
@@ -101,12 +140,12 @@ if __name__ == "__main__":
     converter = utility.Converter()
 
     gc = GreatCircle()
-    (range, azimuth) = gc.gcrab(skaggs_loc, wh_loc)
+    (azimuth, distance) = gc.gcdaz(skaggs_loc, wh_loc)
 
     print(f"skaggs island to winter harbor bearing {azimuth.dd_val}")
     print(
-        f"skaggs island to winter harbor distance {converter.arc2sm(range.rad_val)} SM"
+        f"skaggs island to winter harbor distance {converter.arc2sm(distance.rad_val)} SM"
     )
 
-    temp_loc = gc.razgc(skaggs_loc, range, azimuth)
+    temp_loc = gc.dazgc(skaggs_loc, azimuth, distance)
     print(f"new location: {temp_loc}")

@@ -23,8 +23,9 @@ class ArtifactGenerator:
         gc = gcircle.GreatCircle()
         for key in self.sm.stations:
             station = self.sm.get_station(key)
-            (range, bearing) = gc.gcrab(station.location, target_loc)
-            results.observations.append(artifact.Observation(key, "A", True, bearing))
+            (azimuth, distance) = gc.gcdaz(station.location, target_loc)
+            obs = artifact.Observation(key, "A", True, azimuth, station.equipment, station.location)
+            results.observations.append(obs)
 
         return results
 
@@ -50,21 +51,21 @@ class PacificTrack():
 
         loc1 = origin_loc
         for ndx in range(4):
-            loc2 = gc.razgc(loc1, rangex, bearing)
+            loc2 = gc.dazgc(loc1, bearing, rangex)
             locations.append(loc2)
             loc1 = loc2
    
         bearing = utility.DdAngle(75.0, False)
 
         for ndx in range(4):
-            loc2 = gc.razgc(loc1, rangex, bearing)
+            loc2 = gc.dazgc(loc1, bearing, rangex)
             locations.append(loc2)
             loc1 = loc2
 
         bearing = utility.DdAngle(50.0, False)
 
         for ndx in range(6):
-            loc2 = gc.razgc(loc1, rangex, bearing)
+            loc2 = gc.dazgc(loc1, bearing, rangex)
             locations.append(loc2)
             loc1 = loc2
 

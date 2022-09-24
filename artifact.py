@@ -12,14 +12,34 @@ import typing
 
 import utility
 
-
 class Observation:
-    """container for observations, nil heard/no bearing results are not retained"""
+    """container for station observations"""
 
-    def __init__(self, station: str, quality: str, id_certain: bool, bearing: utility.DdAngle):
+    def __init__(
+        self,
+        station: str,
+        quality: str,
+        id_certain: bool,
+        bearing: utility.DdAngle,
+        equipment: str,
+        location: utility.Location,
+    ):
+        """construct a station observation
+
+        Args:
+            station (str): station identifier
+            quality (str): bearing quality
+            id_certain (bool): true, target identity confirmed
+            bearing (utility.DdAngle): observed bearing to target
+            equipment (str): enumerated equipment type
+            location (utility.Location): station location
+        """
+
         self.bearing = bearing
         self.bearing_used = False
+        self.equipment = equipment
         self.id_certain = id_certain
+        self.location = location
         self.quality = quality
         self.station = station
         self.weight = 0
@@ -41,12 +61,16 @@ class Observation:
         except AttributeError:
             return NotImplemented
 
+class ObservationEncoder(json.JSONEncoder):
+    """JSON encoder"""
+    def default(self, oo):
+        return oo.__dict__
 
 class Artifact:
-    """artifact contains observations and fix results"""
+    """container for all the task things"""
 
     def __init__(self, id: str):
-        self.actual_location = None 
+        self.actual_location = None
         self.callsign = None
         self.ellipse_area = 0
         self.ellipse_location = None
@@ -57,7 +81,7 @@ class Artifact:
         self.id = id
         self.observations = []
         self.radio_frequency = 0
-        self.time_stamp = int(time.time()) # UTC epoch time
+        self.time_stamp = int(time.time())  # UTC epoch time
         self.version = 1
 
     def __repr__(self):
@@ -75,31 +99,43 @@ class Artifact:
         except AttributeError:
             return NotImplemented
 
+class ArtifactEncoder(json.JSONEncoder):
+    """JSON encoder"""
+    def default(self, oo):
+        return oo.__dict__
 
 class ArtifactReadWrite:
-    def parser(self, buffer: dict) -> Artifact:
-        """parse a artifact file"""
+    """support for reading and writing artifacts"""
+
+    def parser_v1(self, buffer: dict) -> Artifact:
+        """parse a version 1 artifact file
+
+        Args:
+            buffer (dict): json dictionary
+
+        Returns:
+            Artifact: populated artifact object
+        """
 
         artifact = Artifact(buffer["id"])
-        artifact.version = buffer["version"]
 
-        # todo test for json schema version
-
+        artifact.callsign = buffer["callsign"]
+        artifact.fix_algorithm = buffer["fix_algorithm"]
         artifact.radio_frequency = buffer["radio_frequency"]
         artifact.time_stamp = buffer["time_stamp"]
+        artifact.version = buffer["version"]
 
-        if "callsign" in buffer:
-            artifact.callsign = buffer["callsign"]
-
-        if "fix_algorithm" in buffer:
-            artifact.fix_algorithm = buffer["fix_algorithm"]
-
-        if "actual_location" in buffer:
-            temp = buffer["actual_location"]
-            temp_lat = utility.DdAngle(temp[0], False)
-            temp_lng = utility.DdAngle(temp[1], False)
+        if 'actual_location' in buffer:
+            temp = buffer['actual_location']
+            print(temp)
+            temp_lat = utility.Latitude(temp['lat']['dd_val'], False)
+            temp_lng = utility.Longitude(temp['lng']['dd_val'], False)
             temp_loc = utility.Location(temp_lat, temp_lng)
             artifact.actual_location = temp_loc
+
+        print("pppppp")
+        print(artifact.actual_location)
+        print("pppppp")
 
         if "ellipse_location" in buffer:
             temp = buffer["ellipse_location"]
@@ -123,7 +159,14 @@ class ArtifactReadWrite:
         return artifact
 
     def reader(self, file_name: str) -> Artifact:
-        """read and parse artifact file"""
+        """read artifact file and cause it to be parsed
+
+        Args:
+            file_name (str): full file name to artficat file
+
+        Returns:
+            Artifact: populated artifact file
+        """
 
         if not os.path.isfile(file_name):
             print(f"missing artifact file {file_name}")
@@ -132,56 +175,35 @@ class ArtifactReadWrite:
         try:
             with open(file_name, "r") as artifact_file:
                 buffer = json.load(artifact_file)
+                artifact_dict = json.loads(buffer)
         except:
             print("file read error")
             return None
 
-        return self.parser(buffer)
+        if artifact_dict['version'] == 1:
+            return self.parser_v1(artifact_dict)
+        else:
+            print('unsupported artifact version')
+
+        return None
 
     def writer(self, file_name: str, artifact: Artifact) -> None:
-        buffer = {}
-        buffer["id"] = artifact.id
-        buffer["radio_frequency"] = artifact.radio_frequency
-        buffer["time_stamp"] = artifact.time_stamp
-        buffer["version"] = 1
+        """write artifact file
 
-        if artifact.callsign is not None:
-            buffer["callsign"] = artifact.callsign
+        Args:
+            file_name (str): file to create or overwrite
+            artifact (Artifact): artifact to persist
+        """
 
-        if artifact.fix_algorithm is not None:
-            buffer["fix_algorithm"] = artifact.fix_algorithm
-
-        if artifact.actual_location is not None:
-            buffer["actual_location"] = [
-                artifact.actual_location.lat.dd_val,
-                artifact.actual_location.lng.dd_val,
-            ]
-
-        if artifact.ellipse_location is not None:
-            buffer["ellipse_location"] = [
-                artifact.ellipse_location.lat.dd_val,
-                artifact.ellipse_location.lng.dd_val,
-            ]
-
-            buffer["ellipse_area"] = artifact.ellipse_area
-            buffer["ellipse_major"] = artifact.ellipse_major
-            buffer["ellipse_minor"] = artifact.ellipse_minor
-            buffer["ellipse_orientation"] = artifact.ellipse_orientation.dd_val
-
-        observations = []
-        for current in artifact.observations:
-            temp = [current.station, current.quality, current.id_certain, current.bearing.dd_val, current.bearing_used]
-            observations.append(temp)
-
-        buffer["observations"] = observations
+        artifact_json = ArtifactEncoder().encode(artifact)
+#        print(artifact_json)
 
         try:
             with open(file_name, "w") as artifact_file:
-                json.dump(buffer, artifact_file)
+                json.dump(artifact_json, artifact_file)
         except:
             print("file write error")
             return None
-
 
 if __name__ == "__main__":
     print("main")

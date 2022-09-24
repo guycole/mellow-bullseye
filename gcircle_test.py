@@ -23,19 +23,19 @@ def test_si_wh():
     gc = gcircle.GreatCircle()
 
     # skaggs island to winter harbor
-    (range1, azimuth) = gc.gcrab(skaggs_loc, wh_loc)
+    (azimuth, distance1) = gc.gcdaz(skaggs_loc, wh_loc)
     assert azimuth.rad_val == pytest.approx(1.103833696879552, utility.EPSILON)
-    assert range1.rad_val == pytest.approx(0.7081533619986511, utility.EPSILON)
+    assert distance1.rad_val == pytest.approx(0.7081533619986511, utility.EPSILON)
 
-    temp_loc = gc.razgc(skaggs_loc, range1, azimuth)
+    temp_loc = gc.dazgc(skaggs_loc, azimuth, distance1)
     assert temp_loc == wh_loc
 
     # winter harbor to skaggs island
-    (range2, azimuth) = gc.gcrab(wh_loc, skaggs_loc)
+    (azimuth, distance2) = gc.gcdaz(wh_loc, skaggs_loc)
     assert azimuth.rad_val == pytest.approx(4.900004198967812, utility.EPSILON)
-    assert range2.rad_val == pytest.approx(range1.rad_val, utility.EPSILON)
+    assert distance2.rad_val == pytest.approx(distance1.rad_val, utility.EPSILON)
 
-    temp_loc = gc.razgc(wh_loc, range2, azimuth)
+    temp_loc = gc.dazgc(wh_loc, azimuth, distance2)
     assert temp_loc == skaggs_loc
 
 
@@ -51,19 +51,19 @@ def test_long0():
     gc = gcircle.GreatCircle()
 
     # winter harbor to augsburg
-    (range1, azimuth) = gc.gcrab(wh_loc, augsburg_loc)
+    (azimuth, distance1) = gc.gcdaz(wh_loc, augsburg_loc)
     assert azimuth.rad_val == pytest.approx(0.9710389465471333, utility.EPSILON)
-    assert range1.rad_val == pytest.approx(0.9081281026712691, utility.EPSILON)
+    assert distance1.rad_val == pytest.approx(0.9081281026712691, utility.EPSILON)
 
-    temp_loc = gc.razgc(wh_loc, range1, azimuth)
+    temp_loc = gc.dazgc(wh_loc, azimuth, distance1)
     assert temp_loc == augsburg_loc
 
     # augsburg to winter harbor
-    (range2, azimuth) = gc.gcrab(augsburg_loc, wh_loc)
+    (azimuth, distance2) = gc.gcdaz(augsburg_loc, wh_loc)
     assert azimuth.rad_val == pytest.approx(5.187645334923327, utility.EPSILON)
-    assert range2.rad_val == pytest.approx(range1.rad_val, utility.EPSILON)
+    assert distance2.rad_val == pytest.approx(distance1.rad_val, utility.EPSILON)
 
-    temp_loc = gc.razgc(augsburg_loc, range2, azimuth)
+    temp_loc = gc.dazgc(augsburg_loc, azimuth, distance2)
     assert temp_loc == wh_loc
 
 
@@ -79,19 +79,19 @@ def test_long180():
     gc = gcircle.GreatCircle()
 
     # wahiawa to finegayan
-    (range1, azimuth) = gc.gcrab(wahiawa_loc, finegayan_loc)
+    (azimuth, distance1) = gc.gcdaz(wahiawa_loc, finegayan_loc)
     assert azimuth.rad_val == pytest.approx(4.74318012298315, utility.EPSILON)
-    assert range1.rad_val == pytest.approx(0.9558762231057704, utility.EPSILON)
+    assert distance1.rad_val == pytest.approx(0.9558762231057704, utility.EPSILON)
 
-    temp_loc = gc.razgc(wahiawa_loc, range1, azimuth)
+    temp_loc = gc.dazgc(wahiawa_loc, azimuth, distance1)
     assert temp_loc == finegayan_loc
 
     # finegayan to wahiawa
-    (range2, azimuth) = gc.gcrab(finegayan_loc, wahiawa_loc)
+    (azimuth, distance2) = gc.gcdaz(finegayan_loc, wahiawa_loc)
     assert azimuth.rad_val == pytest.approx(1.2752128093668078, utility.EPSILON)
-    assert range2.rad_val == pytest.approx(range1.rad_val, utility.EPSILON)
+    assert distance2.rad_val == pytest.approx(distance1.rad_val, utility.EPSILON)
 
-    temp_loc = gc.razgc(finegayan_loc, range2, azimuth)
+    temp_loc = gc.dazgc(finegayan_loc, azimuth, distance2)
     assert temp_loc == wahiawa_loc
 
 
@@ -107,17 +107,17 @@ def test_north_pole():
     gc = gcircle.GreatCircle()
 
     # adak to edzell
-    (range1, azimuth) = gc.gcrab(adak_loc, edzell_loc)
+    (azimuth, distance1) = gc.gcdaz(adak_loc, edzell_loc)
     assert azimuth.rad_val == pytest.approx(0.06055698411302806, utility.EPSILON)
-    assert range1.rad_val == pytest.approx(1.241561805890704, utility.EPSILON)
+    assert distance1.rad_val == pytest.approx(1.241561805890704, utility.EPSILON)
 
-    temp_loc = gc.razgc(adak_loc, range1, azimuth)
+    temp_loc = gc.dazgc(adak_loc, azimuth, distance1)
     assert temp_loc == edzell_loc
 
     # edzell to adak
-    (range2, azimuth) = gc.gcrab(edzell_loc, adak_loc)
+    (azimuth, distance2) = gc.gcdaz(edzell_loc, adak_loc)
     assert azimuth.rad_val == pytest.approx(6.214981799746803, utility.EPSILON)
-    assert range2.rad_val == pytest.approx(range1.rad_val, utility.EPSILON)
+    assert distance2.rad_val == pytest.approx(distance1.rad_val, utility.EPSILON)
 
-    temp_loc = gc.razgc(edzell_loc, range2, azimuth)
+    temp_loc = gc.dazgc(edzell_loc, azimuth, distance2)
     assert temp_loc == adak_loc

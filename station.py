@@ -12,11 +12,23 @@ import utility
 
 
 class Station:
-    """container for stations"""
+    """container for station domain object"""
 
     def __init__(
         self, key: str, equipment: str, variance: int, location: utility.Location
     ):
+        """construct a station container
+
+        Args:
+            key (str): three character identifier
+            equipment (str): enumerated equipment type (i.e. frd10)
+            variance (int): magnetic variance
+            location (utility.Location): location
+
+        Raises:
+            ValueError: bad station key or equipment
+        """
+
         self.equipment = equipment
         self.key = key.strip()
         self.location = location
@@ -48,8 +60,17 @@ class Station:
 
 
 class StationReader:
+    """read and parse station file"""
+
     def parser(self, buffer: str) -> Station:
-        """parse a station row"""
+        """parse a station row
+
+        Args:
+            buffer (str): raw station
+
+        Returns:
+            Station: populated Station object
+        """
 
         candidate = buffer.lower().strip()
         if candidate.startswith("#") or len(candidate) < 3:
@@ -74,7 +95,14 @@ class StationReader:
         return station
 
     def reader(self, file_name: str) -> typing.Dict[str, Station]:
-        """read a station file and return dictionary of stations"""
+        """read a station file and return a dictionary of stations
+
+        Args:
+            file_name (str): file file name
+
+        Returns:
+            typing.Dict[str, Station]: dictionary of stations
+        """
 
         buffer = []
         results = {}
@@ -98,6 +126,8 @@ class StationReader:
 
 
 class StationManager:
+    """station management API"""
+
     def __init__(self):
         self.stations = {}
 

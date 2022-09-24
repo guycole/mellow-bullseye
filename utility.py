@@ -4,6 +4,7 @@
 # Development Environment:OS X 12.5.1/Python 3.9.13
 # Repository: https://github.com/guycole/mellow-bullseye
 #
+import json
 import math
 import typing
 
@@ -12,10 +13,17 @@ PI_HALF = math.pi / 2.0
 
 
 class DdAngle:
-    """decimal degress container"""
+    """decimal degree container"""
 
-    def __init__(self, value: float, radian_flag: bool):
-        if radian_flag:
+    def __init__(self, value: float, rad_flag: bool):
+        """construct a decimal degree container
+
+        Args:
+            value (float): angle value (radians or decimal degrees)
+            radian_flag (bool): true, the value is radians else decimal degrees
+        """
+
+        if rad_flag:
             self.dd_val = math.degrees(value)
             self.rad_val = value
         else:
@@ -32,37 +40,72 @@ class DdAngle:
         return hash(self.rad_val)
 
     def __eq__(self, other):
-        try:
-            temp1 = abs(self.rad_val)
-            temp2 = abs(other.rad_val)
-            return abs(temp1-temp2) < EPSILON
-        except AttributeError:
-            return NotImplemented
+        return abs(self.rad_val - other.rad_val) < EPSILON
+
+class DdAngleEncoder(json.JSONEncoder):
+    def default(self, oo):
+        return oo.__dict__
 
 class Latitude(DdAngle):
-    """latitude in decimal degrees"""
+    """latitude container"""
 
     def __init__(self, value: float, rad_flag: bool):
+        """construct a latitude container
+
+        Args:
+            value (float): latitude (radians or decimal degrees) +North
+            rad_flag (bool): true, the value is radians else decimal degrees
+
+        Raises:
+            ValueError: if value greater than 90 degrees
+        """
+
         super().__init__(value, rad_flag)
 
         if abs(self.rad_val) > PI_HALF:
             raise ValueError("latitude exceeds 90 degrees")
 
+class LatitudeEncoder(json.JSONEncoder):
+    """JSON encoder"""
+    def default(self, oo):
+        return oo.__dict__
 
 class Longitude(DdAngle):
-    """longitude in decimal degrees"""
+    """longitude container"""
 
-    def __init__(self, value: float, rad_flag):
+    def __init__(self, value: float, rad_flag: bool):
+        """construct a longitude container
+
+        Args:
+            value (float): longitude (radians or decimal degrees) +East
+            rad_flag (bool): true, the valus is radians else decimal degrees
+
+        Raises:
+            ValueError: if value greater than 180 degrees
+        """
+
         super().__init__(value, rad_flag)
 
         if abs(self.rad_val) > math.pi:
             raise ValueError("longitude exceeds 180 degrees")
 
+class LongitudeEncoder(json.JSONEncoder):
+    """JSON encoder"""
+
+    def default(self, oo):
+        return oo.__dict__
 
 class Location:
-    """coordinate as a latitude (+ north), longitude (+ east)"""
+    """location container"""
 
     def __init__(self, latitude: Latitude, longitude: Longitude):
+        """construct a location container
+
+        Args:
+            latitude (Latitude): latitude
+            longitude (Longitude): longitude
+        """
+
         self.lat = latitude
         self.lng = longitude
 
@@ -87,19 +130,80 @@ class Location:
     def theta(self) -> float:
         return 0
 
+class LocationEncoder(json.JSONEncoder):
+    """JSON encoder"""
+    def default(self, oo):
+        return oo.__dict__
+
 class Converter:
-    """simple conversion routines"""
+    """convertion support"""
 
     def arc2sm(self, arg: float) -> float:
-        """arc to statute miles"""
+        """arc radians to statute miles
+
+        Args:
+            arg (float): arc radians
+
+        Returns:
+            float: distance in statute miles
+        """
         return arg * 3958.8
 
     def sm2arc(self, arg: float) -> float:
+        """statute miles to arc radians
+
+        Args:
+            arg (float): distance in statute miles
+
+        Returns:
+            float: arc radians
+        """
         return arg / 3958.8
 
     def arc2klik(self, arg: float) -> float:
-        """arc to kilometers"""
+        """arc radians to kilometers
+
+        Args:
+            arg (float): arc radians
+
+        Returns:
+            float: distance in kilometers
+        """
         return arg * 6378.1
+
+
+class FortranFunctions:
+    """replace missing FORTRAN functions"""
+
+    def amin1(self, arg1, arg2):
+        """return the minimum value
+
+        Args:
+            arg1 (_type_): argument
+            arg2 (_type_): argument
+
+        Returns:
+            _type_: return the lowest value
+        """
+        if arg1 < arg2:
+            return arg1
+        else:
+            return arg2
+
+    def amax1(self, arg1, arg2):
+        """return the maximum value
+
+        Args:
+            arg1 (_type_): argument
+            arg2 (_type_): argument
+
+        Returns:
+            _type_: return the maximum value
+        """
+        if arg1 < arg2:
+            return arg2
+        else:
+            return arg1
 
 
 if __name__ == "__main__":
@@ -107,9 +211,25 @@ if __name__ == "__main__":
 
     dd1 = DdAngle(12.3456, False)
     print(dd1)
+    print(DdAngleEncoder().encode(dd1))
 
     lat1 = Latitude(dd1.dd_val, False)
     print(lat1)
+    print(LatitudeEncoder().encode(lat1))
 
     lng1 = Longitude(dd1.dd_val, False)
     print(lng1)
+    print(LongitudeEncoder().encode(lng1))
+
+    loc1 = Location(lat1, lng1)
+    print(loc1)
+    print(type(loc1))
+    # print(LocationEncoder().encode(loc1))
+    
+    json_loc1 = json.dumps(loc1, cls=LocationEncoder)
+    print(json_loc1)
+    print(type(json_loc1))
+
+    loc2 = json.loads(json_loc1)
+    print(loc2)
+    print(type(loc2))
