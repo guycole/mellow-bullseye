@@ -124,15 +124,15 @@ C***********************************************************************
 
 
 
-C	INCLUDE '(COMBLK)'
+	INCLUDE '(COMBLK)'
 
 	INTEGER 	P2,X7,O1
 	INTEGER 	SPOS(20),BPOS(20)
 	REAL 		B2(50), M3
 
 C   Establish error handler.
-C	EXTERNAL	LIB$SIG_TO_RET
-C	CALL LIB$ESTABLISH ( LIB$SIG_TO_RET )
+	EXTERNAL	LIB$SIG_TO_RET
+	CALL LIB$ESTABLISH ( LIB$SIG_TO_RET )
 
 C***********************************************************************
 C   Initialize variables used in fix.
@@ -205,7 +205,7 @@ C   number of valid bearings), then continue processing, otherwise
 C   output answers and stop.
 	IF (I1 .NE. N) THEN
 
-CD	 WRITE (LW,*),' PASS TWO'
+D	 WRITE (LW,*),' PASS TWO'
 	 IFLAG = 0
 	 X1 = P
 	 X2 = T
@@ -293,7 +293,7 @@ C   Output results.
 
 	SUBROUTINE ANSBACK ( BPELAT, BPELON, B2 )
 	
-C	INCLUDE '(COMBLK)'
+	INCLUDE '(COMBLK)'
 
 	REAL		BPELAT, BPELON, B2(50)
 	CHARACTER*3     MCHAR, NCHAR
@@ -327,23 +327,23 @@ C   Now get fractional degrees and store as seconds.
 	N9 = INT(N8/60)
 	IF ((M8 - M9*60) .NE. 0) M9 = M9 + 1
 	IF ((N8 - N9*60) .NE. 0) N9 = N9 + 1
-CD	WRITE (LW,2)
+D	WRITE (LW,2)
 2	FORMAT ('1',///24X,'** POSLOC FIX RESULTS **'///)
 
-CD	WRITE (LW,*) ' '
-CD	WRITE (LW,10) X1
+D	WRITE (LW,*) ' '
+D	WRITE (LW,10) X1
 10	FORMAT (1X,'PHI   : ',F10.2)
-CD	WRITE (LW,20) X2
+D	WRITE (LW,20) X2
 20	FORMAT (1X,'THETA : ',F10.2)
-CD	WRITE (LW,30) F
+D	WRITE (LW,30) F
 30	FORMAT (1X,'FIX RESULTS ON FREQUENCY',F8.2,' MHZ')
-CD	WRITE (LW,*) ' '
-CD	WRITE (LW,40) INT(P),M9,MCHAR,INT(T),N9,NCHAR
+D	WRITE (LW,*) ' '
+D	WRITE (LW,40) INT(P),M9,MCHAR,INT(T),N9,NCHAR
 40	FORMAT (1X,'BPE   :   ',I4,'-',I2,A2,'   ',I4,'-',I3,A2)
 	R = R*RONE
-CD	WRITE(LW,50) INT(M),INT(M1),INT(R)
+D	WRITE(LW,50) INT(M),INT(M1),INT(R)
 50	FORMAT (1X,'AXES  :  ',I5,' * ',I5,'  (',I8,')')
-CD	WRITE(LW,60) A,I1,N
+D	WRITE(LW,60) A,I1,N
 60	FORMAT (1X,'AREA  : ',F11.2,' SQNM.  BRNGS/USED:  ',I2,' /',I2)
 	CALL LOBERROR(X1,X2,B2)
 
@@ -363,7 +363,7 @@ C   Output : T1
 
 	SUBROUTINE BRNG(I,T1)
 	
-C	INCLUDE '(COMBLK)'
+	INCLUDE '(COMBLK)'
 
 	C = T - S2(I)
 	T1 = COS(C)*C5*S3(I) - S5*C2(I)
@@ -388,7 +388,7 @@ C   Output : N1,M3,I2,B2
 	
 	REAL M3,B2(50)
 
-C	INCLUDE '(COMBLK)'
+	INCLUDE '(COMBLK)'
 
 	M3 = 0.
 	N1 = 0
@@ -428,7 +428,7 @@ C   Output : M,M1,A,R
 
 	REAL Y(3),L1,L2,L3
 
-C	INCLUDE '(COMBLK)'
+	INCLUDE '(COMBLK)'
 
 	IF (I1 .LT. 2) THEN
 	  M = 0.
@@ -489,7 +489,7 @@ C  Output : S1,S2,S3,S4,C2,B1
 
 	SUBROUTINE CONVERT
 
-C	INCLUDE '(COMBLK)'
+	INCLUDE '(COMBLK)'
 
 	DO 10 I=1,I1
 	 S1(I) = S1(I)*D1
@@ -515,7 +515,7 @@ C   Initialize constants and set unused variables to zero.
 	REAL B2(50)
 	INTEGER P2,N1,O1
 
-C	INCLUDE '(COMBLK)'
+	INCLUDE '(COMBLK)'
 
 	PI = 3.14159265
 	D1 = 0.01745329252
@@ -557,27 +557,27 @@ C   Output line of bearing error results.
 
 	SUBROUTINE LOBERROR(X1,X2,B2)
 
-C	INCLUDE '(COMBLK)'
+	INCLUDE '(COMBLK)'
 
 	REAL	    B2(50)
 	CHARACTER*3 UCHAR
 
 	P = X1
 	T = X2
-CD	WRITE (LW,*)' '
-CD	WRITE (LW,10)
-C10	FORMAT (2X,'ID    LOB     TLOB     DIST     ERROR     ChiSq    
-C	1 USED')
-CD	WRITE (LW,*) ' --    ---     ----     ----     -----     -----
-CD	1    ----'
+D	WRITE (LW,*)' '
+D	WRITE (LW,10)
+10	FORMAT (2X,'ID    LOB     TLOB     DIST     ERROR     ChiSq    
+	1 USED')
+D	WRITE (LW,*) ' --    ---     ----     ----     -----     -----
+D	1    ----'
 
 	DO 30 I=1,I1
 	 CALL BRNG(I,T1)
 	 CALL RDIST(I,D)
 	 UCHAR = 'YES'
 	 IF (W(I) .EQ. 0.) UCHAR = 'NO'
-CD	 WRITE (LW,20) ID(I),B1(I)*RONE,T1*RONE,D*RONE*60,
-CD	1(T1-B1(I))*RONE,B2(I),UCHAR
+D	 WRITE (LW,20) ID(I),B1(I)*RONE,T1*RONE,D*RONE*60,
+D	1(T1-B1(I))*RONE,B2(I),UCHAR
 20	 FORMAT (2X,A2,3X,F5.1,3X,F5.1,3X,F8.2,4X,F6.1,4X,F6.3,4X,A3)
 30	CONTINUE
 
@@ -593,8 +593,8 @@ C   Terminate execution if unable to fix target.
 
 	SUBROUTINE NOFIX(LW)
 
-CD	WRITE (LW,*) ' '
-CD	WRITE (LW,*) ' NO FIX '
+D	WRITE (LW,*) ' '
+D	WRITE (LW,*) ' NO FIX '
 
 	RETURN
 	END
@@ -614,7 +614,7 @@ C  Output : N,W(I2)
 
 	REAL M3,B2(50)
 
-C	INCLUDE '(COMBLK)'
+	INCLUDE '(COMBLK)'
 
 	IF (N1 .NE. 0) THEN
 	 M3 = 0.
@@ -663,7 +663,7 @@ C   Output : S1,S2,N2,W
 	REAL STALAT(50),STALON(50)
 	CHARACTER*2 NAME(50)
 
-C	INCLUDE '(COMBLK)'
+	INCLUDE '(COMBLK)'
 
 	DO 20 I=1,NBRNG
 	 IF (N2(I) .EQ. 0) THEN
@@ -690,7 +690,7 @@ C   Output : D
 
 	SUBROUTINE RDIST(I,D)
 
-C	INCLUDE '(COMBLK)'
+	INCLUDE '(COMBLK)'
 
 	C = S2(I) - T
 	D = ACOS(S3(I)*S5 + C2(I)*C5*COS(C))
@@ -712,7 +712,7 @@ C   Output : B1 (changed if needed)
 	
 	INTEGER P2
 
-C	INCLUDE '(COMBLK)'
+	INCLUDE '(COMBLK)'
 
 	DO 20 I=1,I1
 	 IF (P2 .NE. 1.) THEN
@@ -766,7 +766,7 @@ C   Output : W,S4
 
 	SUBROUTINE WEIGHT
 
-C	INCLUDE '(COMBLK)'
+	INCLUDE '(COMBLK)'
 
 
 	DO 10 I=1,I1
@@ -817,7 +817,7 @@ C   Output : E1,E2,E3,E4,E5,E6
 
 	SUBROUTINE XFORM(I)
 
-C	INCLUDE '(COMBLK)'
+	INCLUDE '(COMBLK)'
 
 	REAL T3(5)
 
@@ -861,7 +861,7 @@ C   Output : P,T (fix point),FIXED
 	INTEGER 	O1
 	LOGICAL 	FIXED
 
-C	INCLUDE '(COMBLK)'
+	INCLUDE '(COMBLK)'
 
 	REAL V(3),P1(3),U1(3)
 
@@ -914,8 +914,8 @@ C	INCLUDE '(COMBLK)'
 
 	T1 = SQRT(V(1)*V(1) + V(2)*V(2) + V(3)*V(3))
 	IF (T1 .EQ. 0.) THEN
-CD	  WRITE (LW,*) T1
-CD	  WRITE (LW,*) 'NO FIX'
+D	  WRITE (LW,*) T1
+D	  WRITE (LW,*) 'NO FIX'
 C	  CALL NOFIX(LW)
 	  FIXED = .FALSE.
 	END IF
