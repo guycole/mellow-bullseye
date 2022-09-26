@@ -43,7 +43,7 @@ class Observation:
         self.location = location
         self.quality = quality
         self.station = station
-        self.weight = 0
+        self.weight = 1
 
         # todo test for legal bearing quality
 

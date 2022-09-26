@@ -182,7 +182,7 @@ class Converter:
         return arg * 6378.1
 
 
-class FortranFunctions:
+class FortranFunction:
     """replace missing FORTRAN functions"""
 
     def amin1(self, arg1, arg2):
@@ -215,6 +215,27 @@ class FortranFunctions:
         else:
             return arg1
 
+    def sign(self, arg1, arg2):
+        """return the value of arg1 with the sign of arg2
+
+        Args:
+            arg1 (_type_): argument
+            arg2 (_type_): argument
+
+        Returns:
+            _type_: return the value of arg1 with the sign of arg2
+        """
+
+        if arg2 < 0:
+            if arg1 < 0:
+                return arg1
+            else:
+                return -arg1
+        else:
+            if arg1 < 0:
+                return -arg1
+            else:
+                return arg1
 
 if __name__ == "__main__":
     print("main")

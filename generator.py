@@ -20,6 +20,7 @@ class ArtifactGenerator:
         self, id: str, target_loc: utility.Location
     ) -> artifact.Artifact:
         results = artifact.Artifact(id)
+        results.radio_frequency = 12345678 #12 MHz
         results.actual_location = target_loc
 
         gc = gcircle.GreatCircle()
