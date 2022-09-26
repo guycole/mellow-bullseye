@@ -42,9 +42,11 @@ class DdAngle:
     def __eq__(self, other):
         return abs(self.rad_val - other.rad_val) < EPSILON
 
+
 class DdAngleEncoder(json.JSONEncoder):
     def default(self, oo):
         return oo.__dict__
+
 
 class Latitude(DdAngle):
     """latitude container"""
@@ -65,10 +67,13 @@ class Latitude(DdAngle):
         if abs(self.rad_val) > PI_HALF:
             raise ValueError("latitude exceeds 90 degrees")
 
+
 class LatitudeEncoder(json.JSONEncoder):
     """JSON encoder"""
+
     def default(self, oo):
         return oo.__dict__
+
 
 class Longitude(DdAngle):
     """longitude container"""
@@ -89,11 +94,13 @@ class Longitude(DdAngle):
         if abs(self.rad_val) > math.pi:
             raise ValueError("longitude exceeds 180 degrees")
 
+
 class LongitudeEncoder(json.JSONEncoder):
     """JSON encoder"""
 
     def default(self, oo):
         return oo.__dict__
+
 
 class Location:
     """location container"""
@@ -130,10 +137,13 @@ class Location:
     def theta(self) -> float:
         return 0
 
+
 class LocationEncoder(json.JSONEncoder):
     """JSON encoder"""
+
     def default(self, oo):
         return oo.__dict__
+
 
 class Converter:
     """convertion support"""
@@ -225,7 +235,7 @@ if __name__ == "__main__":
     print(loc1)
     print(type(loc1))
     # print(LocationEncoder().encode(loc1))
-    
+
     json_loc1 = json.dumps(loc1, cls=LocationEncoder)
     print(json_loc1)
     print(type(json_loc1))

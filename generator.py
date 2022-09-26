@@ -10,13 +10,15 @@ import gcircle
 import station
 import utility
 
-class ArtifactGenerator:
 
+class ArtifactGenerator:
     def __init__(self, file_name):
         self.sm = station.StationManager()
         self.sm.read_stations(file_name)
 
-    def generate_artifact(self, id:str, target_loc:utility.Location) -> artifact.Artifact:
+    def generate_artifact(
+        self, id: str, target_loc: utility.Location
+    ) -> artifact.Artifact:
         results = artifact.Artifact(id)
         results.actual_location = target_loc
 
@@ -24,17 +26,19 @@ class ArtifactGenerator:
         for key in self.sm.stations:
             station = self.sm.get_station(key)
             (azimuth, distance) = gc.gcdaz(station.location, target_loc)
-            obs = artifact.Observation(key, "A", True, azimuth, station.equipment, station.location)
+            obs = artifact.Observation(
+                key, "A", True, azimuth, station.equipment, station.location
+            )
             results.observations.append(obs)
 
         return results
 
-    def write_artifact(self, candidate:artifact.Artifact) -> None:
+    def write_artifact(self, candidate: artifact.Artifact) -> None:
         arw = artifact.ArtifactReadWrite()
         arw.writer(f"artifact_in/{candidate.id}", candidate)
 
-class PacificTrack():
 
+class PacificTrack:
     def track1(self):
         converter = utility.Converter()
         rangex = utility.DdAngle(converter.sm2arc(500), True)
@@ -54,7 +58,7 @@ class PacificTrack():
             loc2 = gc.dazgc(loc1, bearing, rangex)
             locations.append(loc2)
             loc1 = loc2
-   
+
         bearing = utility.DdAngle(75.0, False)
 
         for ndx in range(4):
@@ -75,6 +79,7 @@ class PacificTrack():
             id = "p001" + temp
             candidate = ag.generate_artifact(id, locations[ndx])
             ag.write_artifact(candidate)
+
 
 if __name__ == "__main__":
     print("main")

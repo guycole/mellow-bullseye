@@ -12,6 +12,7 @@ import typing
 
 import utility
 
+
 class Observation:
     """container for station observations"""
 
@@ -61,10 +62,13 @@ class Observation:
         except AttributeError:
             return NotImplemented
 
+
 class ObservationEncoder(json.JSONEncoder):
     """JSON encoder"""
+
     def default(self, oo):
         return oo.__dict__
+
 
 class Artifact:
     """container for all the task things"""
@@ -99,10 +103,13 @@ class Artifact:
         except AttributeError:
             return NotImplemented
 
+
 class ArtifactEncoder(json.JSONEncoder):
     """JSON encoder"""
+
     def default(self, oo):
         return oo.__dict__
+
 
 class ArtifactReadWrite:
     """support for reading and writing artifacts"""
@@ -116,7 +123,6 @@ class ArtifactReadWrite:
         Returns:
             Artifact: populated artifact object
         """
-
         artifact = Artifact(buffer["id"])
 
         artifact.callsign = buffer["callsign"]
@@ -125,35 +131,46 @@ class ArtifactReadWrite:
         artifact.time_stamp = buffer["time_stamp"]
         artifact.version = buffer["version"]
 
-        if 'actual_location' in buffer:
-            temp = buffer['actual_location']
-            print(temp)
-            temp_lat = utility.Latitude(temp['lat']['dd_val'], False)
-            temp_lng = utility.Longitude(temp['lng']['dd_val'], False)
+        temp = buffer["actual_location"]
+        if temp is not None:
+            temp_lat = utility.Latitude(temp["lat"]["dd_val"], False)
+            temp_lng = utility.Longitude(temp["lng"]["dd_val"], False)
             temp_loc = utility.Location(temp_lat, temp_lng)
             artifact.actual_location = temp_loc
 
-        print("pppppp")
-        print(artifact.actual_location)
-        print("pppppp")
-
-        if "ellipse_location" in buffer:
-            temp = buffer["ellipse_location"]
-            temp_lat = utility.DdAngle(temp[0], False)
-            temp_lng = utility.DdAngle(temp[1], False)
+        temp = buffer["ellipse_location"]
+        if temp is not None:
+            temp_lat = utility.Latitude(temp["lat"]["dd_val"], False)
+            temp_lng = utility.Longitude(temp["lng"]["dd_val"], False)
             temp_loc = utility.Location(temp_lat, temp_lng)
             artifact.ellipse_location = temp_loc
 
-            temp = buffer["ellipse_orientation"]
+        temp = buffer["ellipse_orientation"]
+        if temp is not None:
             artifact.ellipse_orientation = utility.DdAngle(temp, False)
 
-            artifact.ellipse_area = buffer["ellipse_area"]
-            artifact.ellipse_major = buffer["ellipse_major"]
-            artifact.ellipse_minor = buffer["ellipse_minor"]
+        artifact.ellipse_area = buffer["ellipse_area"]
+        artifact.ellipse_major = buffer["ellipse_major"]
+        artifact.ellipse_minor = buffer["ellipse_minor"]
 
         for ndx in buffer["observations"]:
-            obs = Observation(ndx[0], ndx[1], ndx[2], utility.DdAngle(ndx[3], False))
-            obs.bearing_used = ndx[4]
+            bearing = utility.DdAngle(ndx["bearing"]["dd_val"], False)
+            bearing_used = ndx["bearing_used"]
+            equipment = ndx["equipment"]
+            id_certain = ndx["id_certain"]
+            quality = ndx["quality"]
+            station = ndx["station"]
+            weight = ndx["weight"]
+
+            temp = ndx["location"]
+            temp_lat = utility.Latitude(temp["lat"]["dd_val"], False)
+            temp_lng = utility.Longitude(temp["lng"]["dd_val"], False)
+            temp_loc = utility.Location(temp_lat, temp_lng)
+            location = temp_loc
+
+            obs = Observation(
+                station, quality, id_certain, bearing, equipment, location
+            )
             artifact.observations.append(obs)
 
         return artifact
@@ -180,10 +197,10 @@ class ArtifactReadWrite:
             print("file read error")
             return None
 
-        if artifact_dict['version'] == 1:
+        if artifact_dict["version"] == 1:
             return self.parser_v1(artifact_dict)
         else:
-            print('unsupported artifact version')
+            print("unsupported artifact version")
 
         return None
 
@@ -196,7 +213,7 @@ class ArtifactReadWrite:
         """
 
         artifact_json = ArtifactEncoder().encode(artifact)
-#        print(artifact_json)
+        #        print(artifact_json)
 
         try:
             with open(file_name, "w") as artifact_file:
@@ -204,6 +221,7 @@ class ArtifactReadWrite:
         except:
             print("file write error")
             return None
+
 
 if __name__ == "__main__":
     print("main")

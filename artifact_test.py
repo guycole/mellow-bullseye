@@ -9,6 +9,7 @@ import pytest
 import artifact
 import utility
 
+
 def make_observation() -> artifact.Observation:
     lat1 = utility.Latitude(12.3456, False)
     lng1 = utility.Longitude(123.456, False)
@@ -16,6 +17,7 @@ def make_observation() -> artifact.Observation:
 
     bearing = utility.DdAngle(123.456, False)
     return artifact.Observation("XXX", "A", True, bearing, "frd10", loc1)
+
 
 def test_artifact():
     lat1 = utility.Latitude(12.3456, False)
