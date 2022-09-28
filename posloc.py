@@ -61,8 +61,6 @@ class PosLoc:
         cvj = 0
         cvk = 0
 
-        ff = utility.FortranFunction()
-
         obz = artifact.observations
 
         for ii, obs1 in enumerate(obz):
@@ -113,7 +111,7 @@ class PosLoc:
         phi = math.asin(cvj / denominator)
         theta = math.atan(cvi / cvk)
         if cvk < 0:
-            theta = theta + ff.sign(math.pi, cvi)
+            theta = theta + utility.FortranFunction.sign(math.pi, cvi)
 
         lat = utility.Latitude(phi, True)
         lng = utility.Longitude(theta, True)
@@ -149,8 +147,6 @@ class PosLoc:
     def fix(self, artifact: artifact.Artifact):
         print("PosLoc")
 
-        ff = utility.FortranFunction()
-
         self.xform(artifact)
         self.bpe(artifact)
         print(artifact.ellipse_location)
@@ -161,7 +157,7 @@ class PosLoc:
         )
         theta = math.atan(self.cv[0] / self.cv[2])
         if self.cv[2] < 0:
-            theta = theta + ff.sign(math.pi, self.cv[0])
+            theta = theta + utility.FortranFunction.sign(math.pi, self.cv[0])
 
         self.outlie(artifact)
 

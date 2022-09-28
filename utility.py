@@ -42,10 +42,9 @@ class DdAngle:
     def __eq__(self, other):
         return abs(self.rad_val - other.rad_val) < EPSILON
 
-
-class DdAngleEncoder(json.JSONEncoder):
-    def default(self, oo):
-        return oo.__dict__
+    def to_json(self):
+        """convert the instance of this class to json"""
+        return json.dumps(self, indent=4, default=lambda o: o.__dict__)
 
 
 class Latitude(DdAngle):
@@ -67,12 +66,9 @@ class Latitude(DdAngle):
         if abs(self.rad_val) > PI_HALF:
             raise ValueError("latitude exceeds 90 degrees")
 
-
-class LatitudeEncoder(json.JSONEncoder):
-    """JSON encoder"""
-
-    def default(self, oo):
-        return oo.__dict__
+    def to_json(self):
+        """convert the instance of this class to json"""
+        return json.dumps(self, indent=4, default=lambda o: o.__dict__)
 
 
 class Longitude(DdAngle):
@@ -94,12 +90,9 @@ class Longitude(DdAngle):
         if abs(self.rad_val) > math.pi:
             raise ValueError("longitude exceeds 180 degrees")
 
-
-class LongitudeEncoder(json.JSONEncoder):
-    """JSON encoder"""
-
-    def default(self, oo):
-        return oo.__dict__
+    def to_json(self):
+        """convert the instance of this class to json"""
+        return json.dumps(self, indent=4, default=lambda o: o.__dict__)
 
 
 class Location:
@@ -131,24 +124,16 @@ class Location:
         except AttributeError:
             return NotImplemented
 
-    def phi(self) -> float:
-        return 0
-
-    def theta(self) -> float:
-        return 0
-
-
-class LocationEncoder(json.JSONEncoder):
-    """JSON encoder"""
-
-    def default(self, oo):
-        return oo.__dict__
+    def to_json(self):
+        """convert the instance of this class to json"""
+        return json.dumps(self, indent=4, default=lambda o: o.__dict__)
 
 
 class Converter:
-    """convertion support"""
+    """conversion support"""
 
-    def arc2sm(self, arg: float) -> float:
+    @staticmethod
+    def arc2sm(arg: float) -> float:
         """arc radians to statute miles
 
         Args:
@@ -159,7 +144,8 @@ class Converter:
         """
         return arg * 3958.8
 
-    def sm2arc(self, arg: float) -> float:
+    @staticmethod
+    def sm2arc(arg: float) -> float:
         """statute miles to arc radians
 
         Args:
@@ -170,7 +156,8 @@ class Converter:
         """
         return arg / 3958.8
 
-    def arc2klik(self, arg: float) -> float:
+    @staticmethod
+    def arc2klik(arg: float) -> float:
         """arc radians to kilometers
 
         Args:
@@ -185,7 +172,8 @@ class Converter:
 class FortranFunction:
     """replace missing FORTRAN functions"""
 
-    def amin1(self, arg1, arg2):
+    @staticmethod
+    def amin1(arg1, arg2):
         """return the minimum value
 
         Args:
@@ -200,7 +188,8 @@ class FortranFunction:
         else:
             return arg2
 
-    def amax1(self, arg1, arg2):
+    @staticmethod
+    def amax1(arg1, arg2):
         """return the maximum value
 
         Args:
@@ -215,7 +204,8 @@ class FortranFunction:
         else:
             return arg1
 
-    def sign(self, arg1, arg2):
+    @staticmethod
+    def sign(arg1, arg2):
         """return the value of arg1 with the sign of arg2
 
         Args:
@@ -237,30 +227,18 @@ class FortranFunction:
             else:
                 return arg1
 
+
 if __name__ == "__main__":
     print("main")
 
     dd1 = DdAngle(12.3456, False)
     print(dd1)
-    print(DdAngleEncoder().encode(dd1))
 
     lat1 = Latitude(dd1.dd_val, False)
     print(lat1)
-    print(LatitudeEncoder().encode(lat1))
 
     lng1 = Longitude(dd1.dd_val, False)
     print(lng1)
-    print(LongitudeEncoder().encode(lng1))
 
     loc1 = Location(lat1, lng1)
     print(loc1)
-    print(type(loc1))
-    # print(LocationEncoder().encode(loc1))
-
-    json_loc1 = json.dumps(loc1, cls=LocationEncoder)
-    print(json_loc1)
-    print(type(json_loc1))
-
-    loc2 = json.loads(json_loc1)
-    print(loc2)
-    print(type(loc2))

@@ -62,13 +62,9 @@ class Observation:
         except AttributeError:
             return NotImplemented
 
-
-class ObservationEncoder(json.JSONEncoder):
-    """JSON encoder"""
-
-    def default(self, oo):
-        return oo.__dict__
-
+    def to_json(self):
+        """convert the instance of this class to json"""
+        return json.dumps(self, indent=4, default=lambda o: o.__dict__)
 
 class Artifact:
     """container for all the task things"""
@@ -103,13 +99,9 @@ class Artifact:
         except AttributeError:
             return NotImplemented
 
-
-class ArtifactEncoder(json.JSONEncoder):
-    """JSON encoder"""
-
-    def default(self, oo):
-        return oo.__dict__
-
+    def to_json(self):
+        """convert the instance of this class to json"""
+        return json.dumps(self, indent=4, default=lambda o: o.__dict__)
 
 class ArtifactReadWrite:
     """support for reading and writing artifacts"""
@@ -212,12 +204,9 @@ class ArtifactReadWrite:
             artifact (Artifact): artifact to persist
         """
 
-        artifact_json = ArtifactEncoder().encode(artifact)
-        #        print(artifact_json)
-
         try:
             with open(file_name, "w") as artifact_file:
-                json.dump(artifact_json, artifact_file)
+                json.dump(artifact.to_json(), artifact_file)
         except:
             print("file write error")
             return None
