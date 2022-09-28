@@ -11,6 +11,8 @@ import utility
 
 
 def test_dd_equals():
+    """decimal degree test"""
+
     # same value
     dd1 = utility.DdAngle(math.pi / 8.0, True)
     dd2 = utility.DdAngle(math.pi / 8.0, True)
@@ -63,79 +65,23 @@ def test_dd_equals():
     assert dd1 != dd2
 
 
-def xtest_latitude():
-    lat1 = utility.Latitude(math.pi / 8.0, True)
-    lat2 = utility.Latitude(-math.pi / 8.0, True)
-    lat2.rad_val += utility.EPSILON
-    lat1.rad_val -= utility.EPSILON
-
-    assert lat1 == lat1
-
-    lat3 = utility.Latitude(math.pi / 4.0, True)
-    assert str(lat3) == "45.0"
-    assert lat3.dd_val == 45.0
-    assert lat3.rad_val == 0.7853981633974483
-
-    lat4 = utility.DdAngle(math.pi / 4.0, True)
-    assert lat3 == lat4
-
-    assert lat3 != lat1
-    assert lat3 != lat2
-
-    ###
-
-    lat5 = utility.Latitude(-math.pi / 4.0, True)
-    assert str(lat5) == "-45.0"
-    assert lat5.dd_val == -45.0
-    assert lat5.rad_val == -0.7853981633974483
-
-    lat6 = utility.Latitude(-math.pi / 4.0, True)
-    assert lat5 == lat6
-
-    assert lat5 != lat1
-    assert lat5 != lat2
-
-    ###
+def test_latitude():
+    """latitude container test"""
 
     with pytest.raises(ValueError):
-        lat7 = utility.Latitude(1 + math.pi / 2.0, True)
+        utility.Latitude(1 + math.pi / 2.0, True)
 
 
-def xtest_longitude():
-    lng1 = utility.Longitude(math.pi / 8.0, True)
-    lng2 = utility.Longitude(-math.pi / 8.0, True)
-
-    lng3 = utility.Longitude(math.pi / 4.0, True)
-    assert str(lng3) == "45.0"
-    assert lng3.dd_val == 45.0
-    assert lng3.rad_val == 0.7853981633974483
-
-    lng4 = utility.Longitude(math.pi / 4.0, True)
-    assert lng3 == lng4
-
-    assert lng3 != lng1
-    assert lng3 != lng2
-
-    ###
-
-    lng5 = utility.Longitude(-math.pi / 4.0, True)
-    assert str(lng5) == "-45.0"
-    assert lng5.dd_val == -45.0
-    assert lng5.rad_val == -0.7853981633974483
-
-    lng6 = utility.Longitude(-math.pi / 4.0, True)
-    assert lng5 == lng6
-
-    assert lng5 != lng1
-    assert lng5 != lng2
-
-    ###
+def test_longitude():
+    """longitude container test"""
 
     with pytest.raises(ValueError):
-        lng7 = utility.Latitude(1 + math.pi, True)
+        utility.Latitude(1 + math.pi, True)
 
 
-def xtest_location():
+def test_location():
+    """location container test"""
+
     lat1 = utility.Latitude(math.pi / 8.0, True)
     lng1 = utility.Longitude(math.pi / 8.0, True)
     loc1 = utility.Location(lat1, lng1)

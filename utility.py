@@ -6,7 +6,6 @@
 #
 import json
 import math
-import typing
 
 EPSILON = 1e-6
 PI_HALF = math.pi / 2.0
@@ -185,8 +184,8 @@ class FortranFunction:
         """
         if arg1 < arg2:
             return arg1
-        else:
-            return arg2
+
+        return arg2
 
     @staticmethod
     def amax1(arg1, arg2):
@@ -201,8 +200,8 @@ class FortranFunction:
         """
         if arg1 < arg2:
             return arg2
-        else:
-            return arg1
+
+        return arg1
 
     @staticmethod
     def sign(arg1, arg2):
@@ -219,13 +218,13 @@ class FortranFunction:
         if arg2 < 0:
             if arg1 < 0:
                 return arg1
-            else:
-                return -arg1
-        else:
-            if arg1 < 0:
-                return -arg1
-            else:
-                return arg1
+
+            return -arg1
+
+        if arg1 < 0:
+            return -arg1
+
+        return arg1
 
 
 if __name__ == "__main__":
