@@ -4,7 +4,6 @@
 # Development Environment:OS X 12.5.1/Python 3.9.13
 # Repository: https://github.com/guycole/mellow-bullseye
 #
-import math
 import os
 import typing
 
@@ -119,7 +118,7 @@ class StationReader:
 
         for current in buffer:
             parsed = self.parser(current)
-            if parsed != None:
+            if parsed is not None:
                 results[parsed.key] = parsed
 
         return results
@@ -132,10 +131,12 @@ class StationManager:
         self.stations = {}
 
     def read_stations(self, file_name: str) -> None:
+        """read station file and cache contents"""
         sr = StationReader()
         self.stations = sr.reader(file_name)
 
     def get_station(self, key: str) -> Station:
+        """return station associated with key"""
         return self.stations[key]
 
 
