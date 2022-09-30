@@ -4,7 +4,6 @@
 # Development Environment:OS X 12.5.1/Python 3.9.13
 # Repository: https://github.com/guycole/mellow-bullseye
 #
-import math
 import pytest
 
 import gcircle
@@ -12,6 +11,7 @@ import utility
 
 
 def test_si_wh():
+    """test great circle between Skaggs Island and Winter Harbor"""
     skaggs_lat = utility.Latitude(38.1793681, False)
     skaggs_lng = utility.Longitude(-122.3731450, False)
     skaggs_loc = utility.Location(skaggs_lat, skaggs_lng)
@@ -40,6 +40,7 @@ def test_si_wh():
 
 
 def test_long0():
+    """test great circle crossing longitude zero"""
     augsburg_lat = utility.Latitude(48.45, False)
     augsburg_lng = utility.Longitude(10.863611, False)
     augsburg_loc = utility.Location(augsburg_lat, augsburg_lng)
@@ -68,6 +69,7 @@ def test_long0():
 
 
 def test_long180():
+    """test great circle crossing longitude 180"""
     wahiawa_lat = utility.Latitude(21.522222, False)
     wahiawa_lng = utility.Longitude(-158.011389, False)
     wahiawa_loc = utility.Location(wahiawa_lat, wahiawa_lng)
@@ -96,6 +98,7 @@ def test_long180():
 
 
 def test_north_pole():
+    """exercise great circle around north pole"""
     adak_lat = utility.Latitude(51.9425, False)
     adak_lng = utility.Longitude(-176.600556, False)
     adak_loc = utility.Location(adak_lat, adak_lng)

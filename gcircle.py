@@ -39,13 +39,13 @@ class GreatCircle:
         if abs(source.lat.rad_val - utility.PI_HALF) < utility.EPSILON:
             # source is north pole
             azimuth = utility.DdAngle(math.pi, True)
-            distance = utility.DdAngle(utiity.PI_HALF - destination.lat.rad_val, True)
+            distance = utility.DdAngle(utility.PI_HALF - destination.lat.rad_val, True)
             return (azimuth, distance)
 
         if abs(source.lat.rad_val + utility.PI_HALF) < utility.EPSILON:
             # source is south pole
             azimuth = utility.DdAngle(0.0, True)
-            distance = utility.DdAngle(utiity.PI_HALF + destination.lat.rad_val, True)
+            distance = utility.DdAngle(utility.PI_HALF + destination.lat.rad_val, True)
             return (azimuth, distance)
 
         csn1 = math.cos(source.lng.rad_val)
@@ -140,12 +140,12 @@ if __name__ == "__main__":
     converter = utility.Converter()
 
     gc = GreatCircle()
-    (azimuth, distance) = gc.gcdaz(skaggs_loc, wh_loc)
+    (azimuth2, distance2) = gc.gcdaz(skaggs_loc, wh_loc)
 
-    print(f"skaggs island to winter harbor bearing {azimuth.dd_val}")
+    print(f"skaggs island to winter harbor bearing {azimuth2.dd_val}")
     print(
-        f"skaggs island to winter harbor distance {converter.arc2sm(distance.rad_val)} SM"
+        f"skaggs island to winter harbor distance {converter.arc2sm(distance2.rad_val)} SM"
     )
 
-    temp_loc = gc.dazgc(skaggs_loc, azimuth, distance)
+    temp_loc = gc.dazgc(skaggs_loc, azimuth2, distance2)
     print(f"new location: {temp_loc}")
