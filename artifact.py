@@ -5,10 +5,8 @@
 # Repository: https://github.com/guycole/mellow-bullseye
 #
 import json
-import math
 import os
 import time
-import typing
 
 import utility
 
@@ -66,10 +64,11 @@ class Observation:
         """convert the instance of this class to json"""
         return json.dumps(self, indent=4, default=lambda o: o.__dict__)
 
+
 class Artifact:
     """container for all the task things"""
 
-    def __init__(self, id: str):
+    def __init__(self, key: str):
         self.actual_location = None
         self.callsign = None
         self.ellipse_area = 0
@@ -78,30 +77,31 @@ class Artifact:
         self.ellipse_minor = 0
         self.ellipse_orientation = None
         self.fix_algorithm = None
-        self.id = id
+        self.key = key
         self.observations = []
         self.radio_frequency = 0
         self.time_stamp = int(time.time())  # UTC epoch time
         self.version = 1
 
     def __repr__(self):
-        return f"{self.id}"
+        return f"{self.key}"
 
     def __str__(self):
-        return f"{self.id}"
+        return f"{self.key}"
 
     def __hash__(self):
-        return hash(self.id)
+        return hash(self.key)
 
     def __eq__(self, other):
         try:
-            return self.id == other.id
+            return self.key == other.key
         except AttributeError:
             return NotImplemented
 
     def to_json(self):
         """convert the instance of this class to json"""
         return json.dumps(self, indent=4, default=lambda o: o.__dict__)
+
 
 class ArtifactReadWrite:
     """support for reading and writing artifacts"""
@@ -115,7 +115,7 @@ class ArtifactReadWrite:
         Returns:
             Artifact: populated artifact object
         """
-        artifact = Artifact(buffer["id"])
+        artifact = Artifact(buffer["key"])
 
         artifact.callsign = buffer["callsign"]
         artifact.fix_algorithm = buffer["fix_algorithm"]
@@ -191,8 +191,8 @@ class ArtifactReadWrite:
 
         if artifact_dict["version"] == 1:
             return self.parser_v1(artifact_dict)
-        else:
-            print("unsupported artifact version")
+
+        print("unsupported artifact version")
 
         return None
 
@@ -209,7 +209,8 @@ class ArtifactReadWrite:
                 json.dump(artifact.to_json(), artifact_file)
         except:
             print("file write error")
-            return None
+
+        return None
 
 
 if __name__ == "__main__":

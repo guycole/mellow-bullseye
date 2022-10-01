@@ -11,6 +11,7 @@ import utility
 
 
 def make_observation() -> artifact.Observation:
+    """exercise observation class"""
     lat1 = utility.Latitude(12.3456, False)
     lng1 = utility.Longitude(123.456, False)
     loc1 = utility.Location(lat1, lng1)
@@ -20,6 +21,7 @@ def make_observation() -> artifact.Observation:
 
 
 def test_artifact():
+    """exercise artifact class"""
     lat1 = utility.Latitude(12.3456, False)
     lng1 = utility.Longitude(123.456, False)
     loc1 = utility.Location(lat1, lng1)
@@ -40,7 +42,7 @@ def test_artifact():
     assert aa.ellipse_location is None
     assert aa.callsign == "UREZ"
     assert aa.fix_algorithm == "testaroo"
-    assert aa.id == "pytest"
+    assert aa.key == "pytest"
     assert len(aa.observations) == 1
     assert aa.observations[0].station == "XXX"
     assert aa.radio_frequency == 123456
@@ -49,6 +51,7 @@ def test_artifact():
 
 
 def test_observation():
+    """exercise observation class"""
     lat1 = utility.Latitude(12.3456, False)
     lng1 = utility.Longitude(123.456, False)
     loc1 = utility.Location(lat1, lng1)
