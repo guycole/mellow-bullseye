@@ -12,23 +12,24 @@ import utility
 
 
 class ArtifactGenerator:
+    """create a well populated artifact"""
+
     def __init__(self, file_name):
         self.sm = station.StationManager()
         self.sm.read_stations(file_name)
 
-    def generate_artifact(
-        self, id: str, target_loc: utility.Location
-    ) -> artifact.Artifact:
-        results = artifact.Artifact(id)
+    def generate_artifact(self, key: str, target_loc: utility.Location) -> artifact.Artifact:
+        """create a well populated artifact"""
+        results = artifact.Artifact(key)
         results.radio_frequency = 12345678 #12 MHz
         results.actual_location = target_loc
 
         gc = gcircle.GreatCircle()
-        for key in self.sm.stations:
-            station = self.sm.get_station(key)
-            (azimuth, distance) = gc.gcdaz(station.location, target_loc)
+        for ndx in self.sm.stations:
+            station2 = self.sm.get_station(ndx)
+            (azimuth, distance) = gc.gcdaz(station2.location, target_loc)
             obs = artifact.Observation(
-                key, "A", True, azimuth, station.equipment, station.location
+                key, "A", True, azimuth, station2.equipment, station2.location
             )
             results.observations.append(obs)
 
@@ -36,11 +37,14 @@ class ArtifactGenerator:
 
     def write_artifact(self, candidate: artifact.Artifact) -> None:
         arw = artifact.ArtifactReadWrite()
-        arw.writer(f"artifact_in/{candidate.id}", candidate)
+        arw.writer(f"artifact_in/{candidate.key}", candidate)
 
 
 class PacificTrack:
+    """create a simulated pacific target track"""
+
     def track1(self):
+        """generate pacific track 1"""
         converter = utility.Converter()
         rangex = utility.DdAngle(converter.sm2arc(500), True)
         bearing = utility.DdAngle(135.0, False)
@@ -75,10 +79,10 @@ class PacificTrack:
             loc1 = loc2
 
         ag = ArtifactGenerator("stations.dat")
-        for ndx in range(len(locations)):
+        for ndx, _ in enumerate(locations):
             temp = f"{ndx:02}"
-            id = "p001" + temp
-            candidate = ag.generate_artifact(id, locations[ndx])
+            key = "p001" + temp
+            candidate = ag.generate_artifact(key, locations[ndx])
             ag.write_artifact(candidate)
 
 
