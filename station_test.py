@@ -10,7 +10,7 @@ import station
 
 
 def test_station_manager():
-    """ exersise station manager """
+    """exersise station manager"""
     sm = station.StationManager()
     sm.read_stations("stations.dat")
 

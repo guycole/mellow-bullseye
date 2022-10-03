@@ -18,10 +18,12 @@ class ArtifactGenerator:
         self.sm = station.StationManager()
         self.sm.read_stations(file_name)
 
-    def generate_artifact(self, key: str, target_loc: utility.Location) -> artifact.Artifact:
+    def generate_artifact(
+        self, key: str, target_loc: utility.Location
+    ) -> artifact.Artifact:
         """create a well populated artifact"""
         results = artifact.Artifact(key)
-        results.radio_frequency = 12345678 #12 MHz
+        results.radio_frequency = 12345678  # 12 MHz
         results.actual_location = target_loc
 
         gc = gcircle.GreatCircle()
