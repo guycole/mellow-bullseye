@@ -15,9 +15,8 @@ class GreatCircle:
     great circle support
     """
 
-    def gcdaz(
-        self, source: utility.Location, destination: utility.Location
-    ) -> typing.Tuple[utility.DdAngle, utility.DdAngle]:
+    @staticmethod
+    def gcdaz(source: utility.Location, destination: utility.Location) -> typing.Tuple[utility.DdAngle, utility.DdAngle]:
         """
         Calculate great circle distance and azimuth between two points on earths surface.
         Originally written in FORTRAN by Jim Martin, 1985
@@ -74,8 +73,8 @@ class GreatCircle:
 
         return (azimuth, distance)
 
+    @staticmethod
     def dazgc(
-        self,
         source: utility.Location,
         azimuth: utility.DdAngle,
         distance: utility.DdAngle,
@@ -139,13 +138,12 @@ if __name__ == "__main__":
 
     converter = utility.Converter()
 
-    gc = GreatCircle()
-    (azimuth2, distance2) = gc.gcdaz(skaggs_loc, wh_loc)
+    (azimuth2, distance2) = GreatCircle.gcdaz(skaggs_loc, wh_loc)
 
     print(f"skaggs island to winter harbor bearing {azimuth2.dd_val}")
     print(
         f"skaggs island to winter harbor distance {converter.arc2sm(distance2.rad_val)} SM"
     )
 
-    temp_loc = gc.dazgc(skaggs_loc, azimuth2, distance2)
+    temp_loc = GreatCircle.dazgc(skaggs_loc, azimuth2, distance2)
     print(f"new location: {temp_loc}")

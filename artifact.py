@@ -8,7 +8,7 @@ import json
 import os
 import time
 
-import utility
+import utility as util
 
 
 class Observation:
@@ -19,9 +19,9 @@ class Observation:
         station: str,
         quality: str,
         id_certain: bool,
-        bearing: utility.DdAngle,
+        bearing: util.DdAngle,
         equipment: str,
-        location: utility.Location,
+        location: util.Location,
     ):
         """construct a station observation
 
@@ -35,8 +35,9 @@ class Observation:
         """
 
         self.bearing = bearing
-        self.bearing_used = False
+        self.bearing_used = True
         self.equipment = equipment
+        self.error = 0
         self.id_certain = id_certain
         self.location = location
         self.quality = quality
@@ -46,10 +47,10 @@ class Observation:
         # todo test for legal bearing quality
 
     def __repr__(self):
-        return f"{self.station}:{self.quality}:{self.id_certain}:{self.bearing}:{self.bearing_used}"
+        return f"{self.station}:{self.quality}:{self.id_certain}:{self.bearing}:{self.bearing_used}:{self.weight}"
 
     def __str__(self):
-        return f"{self.station}:{self.quality}:{self.id_certain}:{self.bearing}:{self.bearing_used}"
+        return f"{self.station}:{self.quality}:{self.id_certain}:{self.bearing}:{self.bearing_used}:{self.weight}"
 
     def __hash__(self):
         return hash(self.station)
@@ -98,6 +99,15 @@ class Artifact:
         except AttributeError:
             return NotImplemented
 
+    def bearing_population(self):
+        """return quantity of employed bearings"""
+        population = 0
+        for obs in self.observations:
+            if obs.bearing_used:
+                population += 1
+
+        return population
+
     def to_json(self):
         """convert the instance of this class to json"""
         return json.dumps(self, indent=4, default=lambda o: o.__dict__)
@@ -125,28 +135,28 @@ class ArtifactReadWrite:
 
         temp = buffer["actual_location"]
         if temp is not None:
-            temp_lat = utility.Latitude(temp["lat"]["dd_val"], False)
-            temp_lng = utility.Longitude(temp["lng"]["dd_val"], False)
-            temp_loc = utility.Location(temp_lat, temp_lng)
+            temp_lat = util.Latitude(temp["lat"]["dd_val"], False)
+            temp_lng = util.Longitude(temp["lng"]["dd_val"], False)
+            temp_loc = util.Location(temp_lat, temp_lng)
             artifact.actual_location = temp_loc
 
         temp = buffer["ellipse_location"]
         if temp is not None:
-            temp_lat = utility.Latitude(temp["lat"]["dd_val"], False)
-            temp_lng = utility.Longitude(temp["lng"]["dd_val"], False)
-            temp_loc = utility.Location(temp_lat, temp_lng)
+            temp_lat = util.Latitude(temp["lat"]["dd_val"], False)
+            temp_lng = util.Longitude(temp["lng"]["dd_val"], False)
+            temp_loc = util.Location(temp_lat, temp_lng)
             artifact.ellipse_location = temp_loc
 
         temp = buffer["ellipse_orientation"]
         if temp is not None:
-            artifact.ellipse_orientation = utility.DdAngle(temp, False)
+            artifact.ellipse_orientation = util.DdAngle(temp, False)
 
         artifact.ellipse_area = buffer["ellipse_area"]
         artifact.ellipse_major = buffer["ellipse_major"]
         artifact.ellipse_minor = buffer["ellipse_minor"]
 
         for ndx in buffer["observations"]:
-            bearing = utility.DdAngle(ndx["bearing"]["dd_val"], False)
+            bearing = util.DdAngle(ndx["bearing"]["dd_val"], False)
             bearing_used = ndx["bearing_used"]
             equipment = ndx["equipment"]
             id_certain = ndx["id_certain"]
@@ -155,9 +165,9 @@ class ArtifactReadWrite:
             weight = ndx["weight"]
 
             temp = ndx["location"]
-            temp_lat = utility.Latitude(temp["lat"]["dd_val"], False)
-            temp_lng = utility.Longitude(temp["lng"]["dd_val"], False)
-            temp_loc = utility.Location(temp_lat, temp_lng)
+            temp_lat = util.Latitude(temp["lat"]["dd_val"], False)
+            temp_lng = util.Longitude(temp["lng"]["dd_val"], False)
+            temp_loc = util.Location(temp_lat, temp_lng)
             location = temp_loc
 
             obs = Observation(

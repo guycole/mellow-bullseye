@@ -7,14 +7,14 @@
 import os
 import typing
 
-import utility
+import utility as util
 
 
 class Station:
     """container for station domain object"""
 
     def __init__(
-        self, key: str, equipment: str, variance: int, location: utility.Location
+        self, key: str, equipment: str, variance: int, location: util.Location
     ):
         """construct a station container
 
@@ -82,13 +82,13 @@ class StationReader:
             return None
 
         # latitude in dd form
-        dd_lat = utility.DdAngle(float(row_tokens[3]), False)
+        dd_lat = util.DdAngle(float(row_tokens[3]), False)
 
         # longitude in dd form
-        dd_lng = utility.DdAngle(float(row_tokens[4]), False)
+        dd_lng = util.DdAngle(float(row_tokens[4]), False)
 
         # location
-        location = utility.Location(dd_lat, dd_lng)
+        location = util.Location(dd_lat, dd_lng)
 
         station = Station(row_tokens[0], row_tokens[1], row_tokens[2], location)
         return station

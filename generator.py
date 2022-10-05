@@ -4,12 +4,10 @@
 # Development Environment:OS X 12.5.1/Python 3.9.13
 # Repository: https://github.com/guycole/mellow-bullseye
 #
-import math
 import artifact
-import gcircle
+import gcircle as gc
 import station
-import utility
-
+import utility as util
 
 class ArtifactGenerator:
     """create a well populated artifact"""
@@ -19,19 +17,18 @@ class ArtifactGenerator:
         self.sm.read_stations(file_name)
 
     def generate_artifact(
-        self, key: str, target_loc: utility.Location
+        self, key: str, target_loc: util.Location
     ) -> artifact.Artifact:
         """create a well populated artifact"""
         results = artifact.Artifact(key)
         results.radio_frequency = 12345678  # 12 MHz
         results.actual_location = target_loc
 
-        gc = gcircle.GreatCircle()
         for ndx in self.sm.stations:
             station2 = self.sm.get_station(ndx)
-            (azimuth, distance) = gc.gcdaz(station2.location, target_loc)
+            (azimuth, distance) = gc.GreatCircle.gcdaz(station2.location, target_loc)
             obs = artifact.Observation(
-                key, "A", True, azimuth, station2.equipment, station2.location
+                ndx, "A", True, azimuth, station2.equipment, station2.location
             )
             results.observations.append(obs)
 
@@ -47,36 +44,34 @@ class PacificTrack:
 
     def track1(self):
         """generate pacific track 1"""
-        converter = utility.Converter()
-        rangex = utility.DdAngle(converter.sm2arc(500), True)
-        bearing = utility.DdAngle(135.0, False)
+        converter = util.Converter()
+        rangex = util.DdAngle(converter.sm2arc(500), True)
+        bearing = util.DdAngle(135.0, False)
 
         locations = []
 
-        origin_lat = utility.Latitude(32.0, False)
-        origin_lng = utility.Longitude(128.0, False)
-        origin_loc = utility.Location(origin_lat, origin_lng)
+        origin_lat = util.Latitude(32.0, False)
+        origin_lng = util.Longitude(128.0, False)
+        origin_loc = util.Location(origin_lat, origin_lng)
         locations.append(origin_loc)
-
-        gc = gcircle.GreatCircle()
 
         loc1 = origin_loc
         for ndx in range(4):
-            loc2 = gc.dazgc(loc1, bearing, rangex)
+            loc2 = gc.GreatCircle.dazgc(loc1, bearing, rangex)
             locations.append(loc2)
             loc1 = loc2
 
-        bearing = utility.DdAngle(75.0, False)
+        bearing = util.DdAngle(75.0, False)
 
         for ndx in range(4):
-            loc2 = gc.dazgc(loc1, bearing, rangex)
+            loc2 = gc.GreatCircle.dazgc(loc1, bearing, rangex)
             locations.append(loc2)
             loc1 = loc2
 
-        bearing = utility.DdAngle(50.0, False)
+        bearing = util.DdAngle(50.0, False)
 
         for ndx in range(6):
-            loc2 = gc.dazgc(loc1, bearing, rangex)
+            loc2 = gc.GreatCircle.dazgc(loc1, bearing, rangex)
             locations.append(loc2)
             loc1 = loc2
 
