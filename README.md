@@ -20,3 +20,5 @@ How to determine transmitter location on a global scale using [HF radio](https:/
 
 ## References
 + [1] Robin Felix, “High Frequency Direction Finding: Errors, Algorithms, and Outboard," Masters Thesis (NPS62-82-046), Naval Posgraduate School, Monterey, CA 93940
+
+[![Docker Image CI](https://github.com/guycole/mellow-bullseye/actions/workflows/docker-image.yml/badge.svg)](https://github.com/guycole/mellow-bullseye/actions/workflows/docker-image.yml)
